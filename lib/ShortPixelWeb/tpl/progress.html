@@ -1,0 +1,36 @@
+<div>
+    <h2>Optimizing {folder} ...</h2>
+</div>
+{FILE "messages.html"}
+<!-- BEGIN: bar -->
+<input type="hidden" id="totalFiles" value="{total_files}">
+<input type="hidden" id="doneFiles" value="{done_files}">
+<div id="bulk-progress" class="progress" >
+    <div class="progress-img" style="left: {percent}%;">
+        <img src="img/slider.png">
+        <span>{percent_after}</span>
+    </div>
+    <div class="progress-left" style="width: {percent}%">{percent_before}</div>
+</div>
+<!-- END: bar -->
+<div class="bulk-slider-container">
+    <div  class="short-pixel-block-title"><span>Just optimized:</span><span class="filename"></span></div>
+    <div class="bulk-slider">
+        <div class="bulk-slide" id="empty-slide">
+            <div class="bulk-slide-images">
+                <div class="img-original">
+                    <div><img class="bulk-img-orig" src=""></div>
+                    <div>Original image</div>
+                </div>
+                <div class="img-optimized">
+                    <div><img class="bulk-img-opt" src=""></div>
+                    <div>Optimized image</div>
+                </div>
+            </div>
+            <div class="img-info">
+                <div style="font-size: 14px; line-height: 10px; margin-bottom:16px;">Optimized by:</div>
+                <span class="bulk-opt-percent"></span>
+            </div>
+        </div>
+    </div>
+</div>

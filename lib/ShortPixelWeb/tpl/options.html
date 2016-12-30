@@ -1,0 +1,63 @@
+<div id="options-header">
+    <h2  style="margin: 40px 0 10px">{options_type} optimization options:</h2>
+</div>
+<div class="options-line">
+    <label>Optimization type </label>
+    <div class="form-field">
+        <input class="type" id="type-lossy" type="radio" name="type" value="lossy" {lossy_checked}>Lossy (recommended)
+        <p class="settings-info">
+            <b>Lossy compression: </b>lossy has a better compression rate than lossless compression.<br>The resulting image is identical with the original to the human eye. You can run a test for free
+            <a href="https://shortpixel.com/online-image-compression" target="_blank">here</a>.
+        </p>
+        <input class="type" id="type-lossless" type="radio" name="type" value="lossless" {lossless_checked}>Lossless
+        <p class="settings-info">
+            <b>Lossless compression: </b> the shrunk image will be identical with the original and smaller in size.<br>In some rare cases you will need to use
+            this type of compression. Some technical drawings or images from vector graphics are possible situations.
+        </p>
+    </div>
+</div>
+<div class="options-line">
+    <label>CMYK to RGB conversion</label>
+    <div class="form-field">
+        <input class="cmyk2rgb" id="cmyk2rgb" type="checkbox" name="cmyk2rgb" {cmyk2rgb_checked}>Adjust your images for computer and mobile screen display.
+        <p class="settings-info">
+            Images for the web only need RGB format and converting them from CMYK to RGB makes them smaller.
+        </p>
+    </div>
+</div>
+<div class="options-line">
+    <label>Remove EXIF </label>
+    <div class="form-field">
+        <input class="removeExif" id="removeExif" type="checkbox" name="removeExif" {remove_exif_checked}>Remove the EXIF tag of the image (recommended).
+        <p class="settings-info">
+            EXIF is a set of various pieces of information that are automatically embedded into the image upon creation. This can include GPS position, camera manufacturer, date and time, etc.
+            Unless you really need that data to be preserved, we recommend removing it as it can lead to <a href="http://blog.shortpixel.com/how-much-smaller-can-be-images-without-exif-icc" target="_blank">better compression rates</a>.
+        </p>
+    </div>
+</div>
+<div class="options-line">
+    <label>Resize large images</label>
+    <div class="form-field">
+        <input class="resize" id="resize" type="checkbox" name="resize" {resize_checked}> to maximum
+        <input type="text" name="width" id="width" style="width:70px" value="{width}" disabled="disabled" placeholder="1024"> pixels wide ×
+        <input type="text" name="height" id="height" style="width:70px" value="{height}" disabled="disabled" placeholder="1024"> pixels high (original aspect ratio is preserved and image is not cropped)
+        <p class="settings-info">
+            Recommended for large photos, like the ones taken with your phone. Saved space can go up to 80% or more after resizing.
+        </p>
+        <div class="size-type">
+            <input type="radio" name="resize_type" id="resize_type_outer" value="outer" {resize_outer_checked}>
+            <img src="img/resize-outer.png" title="Sizes will be greater or equal to the corresponding value. For example, if you set the resize dimensions at 1000x1200, an image of 2000x3000px will be resized to 1000x1500px while an image of 3000x2000px will be resized to 1800x1200px">
+            <input type="radio" name="resize_type" id="resize_type_inner" value="inner" {resize_inner_checked}>
+            <img src="img/resize-inner.png" title="Sizes will be smaller or equal to the corresponding value. For example, if you set the resize dimensions at 1000x1200, an image of 2000x3000px will be resized to 800x1200px while an image of 3000x2000px will be resized to 1000x667px">
+        </div>
+    </div>
+</div>
+<div class="options-line">
+    <label>WebP versions</label>
+    <div class="form-field">
+        <input class="webp" id="webp" type="checkbox" name="webp" {webp_checked}> Create also <a href="http://blog.shortpixel.com/how-webp-images-can-speed-up-your-site/" target="_blank">WebP versions</a> of the images <strong>for free</strong>.
+        <p class="settings-info">
+            WebP images can be up to three times smaller than PNGs and 25% smaller than JPGs. Choosing this option <strong>does not use up additional credits</strong>.
+        </p>
+    </div>
+</div>

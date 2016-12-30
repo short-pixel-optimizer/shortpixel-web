@@ -1,0 +1,303 @@
+body {
+    padding:10px 100px;
+    background-color: #cee5e9;
+    font-family: sans-serif;
+}
+.box {
+    box-shadow: #c2d9dd 4px -8px 0px;
+    min-width: 910px;
+}
+.header-section {
+    background-color: #e2faff;
+    text-align: center;
+}
+.header {
+    font-size: 55px;
+    font-weight: bold;
+    display: inline-block;
+}
+.header .short {
+    color:#1cbecb;
+}
+.header .pixel {
+    color: #ee2824;
+}
+.header .title {
+    display: inline-block;
+    margin-top: 30px;
+    margin-left: 12px;
+}
+.header img {
+    float:left;
+}
+.graytext {
+    color: #666666;
+}
+.content {
+    background-color: white;
+    text-align: center;
+    padding: 20px;
+    min-width: 870px;
+}
+form {
+    min-width: 870px;
+    margin-bottom: 30px;
+}
+form label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #444444;
+    vertical-align: middle;
+}
+.btn {
+    color: #fff;
+    box-shadow: #796065 2px 2px 0px;
+    border: none 0px;
+    padding: 15px 40px;
+    font-size: 20px;
+    font-weight:bold;
+}
+.btn.btn-optimize {
+    background-color: #ee2824;
+    border-color: #ac2925;
+    margin-left: 20px;
+    vertical-align: middle;
+}
+.btn.btn-select {
+    background-color: #1cbecb;
+    border-color: #1dba9b;
+    vertical-align: middle;
+    margin-left: -5px;
+    padding: 16px 40px;
+    cursor: pointer;
+}
+input.folder {
+    background-color: #e2faff;
+    border: none;
+    height: 43px;
+    line-height: 43px;
+    padding: 5px 20px;
+    font-size: 25px;
+    color: #aaa;
+    font-weight: bold;
+    box-shadow: #796065 2px 2px 0px;
+    vertical-align: middle;
+    margin-left: 20px;
+}
+div.form-element {
+    display: inline-block;
+}
+div.text-column {
+    width: 26%;
+    display: inline-block;
+    padding: 0 3%;
+    vertical-align: top;
+}
+.links {
+    text-align: center;
+    padding: 20px;
+}
+.links a {
+    color: #444444;
+    text-decoration: none;
+}
+.success {
+    color: #1dba9b;
+}
+.error {
+    color: #d62728;
+}
+/* ----------------- BULK PROGRESS BAR ----------------- */
+.progress {
+    background-color: #ecedee;
+    height: 30px;
+    position: relative;
+    width: 85%;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+.progress .progress-left {
+    background-color: #1cbecb;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 28px;
+    text-align: center;
+    color: #ffffff;
+}
+.progress .progress-img {
+    position: absolute;
+    top: -10px;
+    z-index: 2;
+    margin-left: -35px;
+    line-height: 48px;
+    font-size: 22px;
+    font-weight: bold;
+}
+.progress .progress-img span {
+    vertical-align: top;
+    margin-left: -7px;
+}
+/* ----------------- BULK SLIDER ----------------- */
+.bulk-slider-container {
+    display: none;
+    min-height: 300px;
+}
+.bulk-slider-container span.filename {
+    font-weight: normal;
+}
+.short-pixel-block-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+.bulk-slider {
+    display: table;
+    margin: 0 auto;
+}
+.bulk-slider .bulk-slide {
+    /* position: absolute; */
+    margin: 0 auto;
+    display: inline-block;
+    font-weight: bold;
+}
+.bulk-slide-images {
+    display: inline-block;
+    border: 1px solid #1CAECB;
+    padding: 15px 0 0 20px;
+}
+.bulk-slider .img-original, .bulk-slider .img-optimized {
+    display: inline-block;
+    margin-right: 20px;
+    text-align: center;
+}
+.bulk-slider .img-original div, .bulk-slider .img-optimized div {
+    max-height: 450px;
+    overflow: hidden;
+}
+.bulk-slider .img-original img, .bulk-slider .img-optimized img {
+    max-width: 300px;
+}
+.bulk-slider .img-info {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 48px;
+    max-width: 150px;
+    padding: 10px 0 0 20px;
+}
+/* ------------------- OPTIONS -------------------- */
+.options-line label {
+    width:30%;
+    padding: 10px;
+    text-align: right;
+    display: inline-block;
+    vertical-align: top;
+}
+.options-line .form-field {
+    display: inline-block;
+    width: 60%;
+    padding: 10px 20px;
+    text-align: left;
+    font-size: 1.2em;
+}
+.options-line .form-field input {
+    padding: 5px;
+}
+p.settings-info {
+    margin-top: 0;
+    color: #939393;
+}
+.options-line .form-field .size-type {
+    margin-top: 10px;
+}
+.options-line .form-field .size-type input {
+    margin: -50px 10px 38px 0;
+    vertical-align: middle;
+}
+.options-line .form-field .size-type img{
+    margin-right: 30px;
+}
+/* ----------------------- INPUTS ----------------------- */
+@font-face {
+    font-family: 'dashicons';
+    src: url('../fonts/dashicons.eot'); /* IE9 Compat Modes */
+    src: url('../fonts/dashicons.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/dashicons.woff') format('woff'), /* Pretty Modern Browsers */
+    url('../fonts/dashicons.ttf')  format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/dashicons.svg#dashicons') format('svg'); /* Legacy iOS */
+}
+input[type=checkbox], input[type=radio] {
+    border: 1px solid #b4b9be;
+    background: #fff;
+    color: #555;
+    clear: none;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 0;
+    height: 16px;
+    margin: -4px 4px 0 0;
+    outline: 0;
+    padding: 0!important;
+    text-align: center;
+    vertical-align: middle;
+    width: 16px;
+    min-width: 16px;
+    -webkit-appearance: none;
+    -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+    -webkit-transition: .05s border-color ease-in-out;
+    transition: .05s border-color ease-in-out;
+}
+input[type=radio] {
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    margin-right: 4px;
+    line-height: 10px;
+}
+input[type=checkbox]:checked:before {
+    content: "\f147";
+    margin: -3px 0 0 -4px;
+    color: #02919c;
+}
+input[type=checkbox]:checked:before, input[type=radio]:checked:before {
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    font: 400 21px/1 dashicons;
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+input[type=checkbox]:checked:before, input[type=radio]:checked:before {
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    font: 400 21px/1 dashicons;
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+input[type=radio]:checked:before {
+    content: "\2022";
+    text-indent: -9999px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    font-size: 24px;
+    width: 6px;
+    height: 6px;
+    margin: 4px;
+    line-height: 16px;
+    background-color: #1e8cbe;
+}
+input[type=checkbox]:checked:before {
+    content: "\f147";
+    margin: -3px 0 0 -4px;
+    color: #02919c;
+}

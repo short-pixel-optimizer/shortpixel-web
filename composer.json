@@ -1,0 +1,38 @@
+{
+  "name": "shortpixel/shortpixel-web",
+  "description": "ShortPixel generic web interface using the PHP SDK. Read more at https://shortpixel.com/api",
+  "keywords": [
+    "shortpixel",
+    "optimize",
+    "compress",
+    "images",
+    "api"
+  ],
+
+  "homepage": "https://shortpixel.com/api",
+  "license": "MIT",
+  "minimum-stability": "dev",
+
+  "support": {
+    "email": "support@shortpixel.com"
+  },
+
+  "authors": [{
+    "name": "Simon Duduica",
+    "email": "simon@shortpixel.com"
+  }],
+
+  "require": {
+    "shortpixel/shortpixel-php": "*"
+  },
+
+  "require-dev": {
+    "symfony/yaml": "~2.0",
+    "phpunit/phpunit": "~4.0"
+  },
+
+  "autoload": {
+    "files": ["lib/ShortPixelWeb.php"],
+    "psr-4": {"ShortPixelWeb\\": "lib/ShortPixelWeb/"}
+  }
+}
