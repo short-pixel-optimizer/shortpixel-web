@@ -6,7 +6,7 @@
     "optimize",
     "compress",
     "images",
-    "api"
+    "web tool"
   ],
 
   "homepage": "https://shortpixel.com/api",
@@ -24,10 +24,6 @@
 
   "require": {
     "shortpixel/shortpixel-php": "*"
-  },
-
-  "require-dev": {
-    "symfony/yaml": "~2.0"
   },
 
   "autoload": {
