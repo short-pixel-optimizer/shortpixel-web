@@ -2,7 +2,7 @@
 
 # ShortPixel Web optimization interface using the ShortPixel PHP SDK
 
-This interface is meant to be installed on your site and used to optimize folders PHP client for the ShortPixel API, used for [ShortPixel](https://shortpixel.com) ShortPixel optimizes your images and improves website performance by reducing images size. Read more at [http://shortpixel.com](http://shortpixel.com).
+This interface is meant to be installed on your site and used to optimize folders PHP client for the ShortPixel API, used for [ShortPixel](https://shortpixel.com). ShortPixel optimizes your images and improves website performance by reducing images size. Read more at [http://shortpixel.com](http://shortpixel.com).
 
 ## Documentation
 

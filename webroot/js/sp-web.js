@@ -85,7 +85,7 @@ var ShortPixel = function() {
     function optimize(folder) {
         $.ajax({
             type: "POST",
-            url: window.location.split("?")[0],
+            url: window.location.href.split("?")[0],
             data: {
                 action: 'shortpixel_optimize',
                 folder: folder

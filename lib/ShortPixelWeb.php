@@ -244,7 +244,7 @@ class ShortPixelWeb
 
     function setupWrapper($path) {
         //TODO schimba asta cu composer
-        require_once("vendor/autoload.php");
+        require_once("../vendor/autoload.php");
         \ShortPixel\setKey($this->settings["API_KEY"]);
         $opts = $this->readOptions($path);
         $opts["persist_type"] = "text";

@@ -27,12 +27,10 @@
   },
 
   "require-dev": {
-    "symfony/yaml": "~2.0",
-    "phpunit/phpunit": "~4.0"
+    "symfony/yaml": "~2.0"
   },
 
   "autoload": {
-    "files": ["lib/ShortPixelWeb.php"],
     "psr-4": {"ShortPixelWeb\\": "lib/ShortPixelWeb/"}
   }
 }
