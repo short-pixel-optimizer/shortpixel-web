@@ -48,11 +48,11 @@ class ShortPixelWeb
                     $this->renderFolderOptionsData($_POST['folder']);
                     break;
                 case 'shortpixel_optimize' :
-                    $this->optimizeAction($_POST['folder']);
+                    $this->optimizeAction($_POST['folder'], $_POST['slice']);
             }
         }
         elseif(isset($_GET['folder'])) {
-            $this->renderOptimizeNow($_GET['folder']);
+            $this->renderOptimizeNow($_GET);
         }
         else {
             $this->renderStartPage(array());
@@ -182,10 +182,15 @@ class ShortPixelWeb
         $this->xtpl->out('main');
     }
 
-    function renderOptimizeNow($folder) {
-        if(isset($_GET['type'])) {
+    function renderOptimizeNow($optData) {
+        $folder = $optData['folder'];
+        if(!strlen($folder)) {
+            $this->renderStartPage(array('error' => "Please select a folder."));
+            return;
+        }
+        if(isset($optData['type'])) {
             //the action is from the Optimize now button and it has the settings, persist them in the .sp-options file
-            $this->persistFolderSettings($_GET, $this->normalizePath(dirname(dirname(__DIR__)) . $_GET['folder']));
+            $this->persistFolderSettings($optData, $this->normalizePath(dirname(dirname(__DIR__)) . $optData['folder']));
         }
         $this->setupWrapper($folder);
         $status = \ShortPixel\folderInfo(dirname(dirname(__DIR__)) . $folder);
@@ -216,7 +221,7 @@ class ShortPixelWeb
         $this->xtpl->out('main');
     }
 
-    function optimizeAction($folder) {
+    function optimizeAction($folder, $slice) {
         $timeLimit = ini_get('max_execution_time');
         if($timeLimit) {
             $timeLimit -= 5;
@@ -227,7 +232,7 @@ class ShortPixelWeb
         $folderPath = dirname(dirname(__DIR__)) . $folder;
         $this->setupWrapper($folderPath);
         try {
-            die(json_encode(\ShortPixel\fromFolder($folderPath)->wait($timeLimit)->toFiles($folderPath)));
+            die(json_encode(\ShortPixel\fromFolder($folderPath, $slice)->wait($timeLimit)->toFiles($folderPath)));
         }
         catch(\Exception $e) {
             die(json_encode(array("status" => array("code" => $e->getCode(), "message" => $e->getMessage()))));

@@ -46,6 +46,9 @@
 
 })(jQuery);
 
+var spSlice = 10;
+var errCount = 0;
+
 var ShortPixel = function() {
 
     function browseContent(browseData) {
@@ -82,20 +85,22 @@ var ShortPixel = function() {
         }
     }
 
-    function optimize(folder) {
+    function optimize(folder, slice) {
         $.ajax({
             type: "POST",
             url: window.location.href.split("?")[0],
             data: {
                 action: 'shortpixel_optimize',
-                folder: folder
+                folder: folder,
+                slice: slice
             },
             success: function(response) {
+                errCount == Math.max(0, errCount - 1); //decrease the errors at each success
                 try {
                     var data = JSON.parse(response);
                 } catch (e) {
                     console.log("Unrecognized response, retrying in 10 sec. (" + response + ")");
-                    setTimeout(function(){optimize(folder);}, 10000);
+                    setTimeout(function(){optimize(folder, spSlice);}, 10000);
                     return;
                 }
                 if(data.status.code < 0) { //an error occured
@@ -105,7 +110,7 @@ var ShortPixel = function() {
                         $('<div><h3 class="error" id="error-message">' + data.status.message + '</h3></div>').insertBefore("#totalFiles");
                     }
                     if(data.status.code != -403) {
-                        setTimeout(function(){optimize(folder);}, 15000);
+                        setTimeout(function(){optimize(folder, spSlice);}, 15000);
                     }
                     return;
                 }
@@ -142,12 +147,12 @@ var ShortPixel = function() {
                         sliderUpdate();
                         ShortPixel.sliderConsumerId = setInterval(sliderUpdate, ShortPixel.sliderFrequencyMs);
                     }
-                    setTimeout(function(){optimize(folder);}, 1000);
+                    setTimeout(function(){optimize(folder, spSlice);}, 1000);
                 }
                 else if(data.status.code == 0)
                 {
                     // timeout, retry in 10 sec.
-                    setTimeout(function(){optimize(folder);}, 10000);
+                    setTimeout(function(){optimize(folder, spSlice);}, 10000);
                 }
             },
             error : function(x, t, m) {
@@ -156,7 +161,14 @@ var ShortPixel = function() {
                 } else {
                     console.log("got error " + t + ", retrying in 10 sec...");
                 }
-                setTimeout(function(){optimize(folder);}, 10000);
+                if(errCount > 4) {
+                    //halve the number of files sent after errCount gets over 3 (
+                    errCount = 0;
+                    spSlice = Math.max(1, Math.round(spSlice/2));
+                } else {
+                    errCount += 2; //errors add up twice as fast as they decrease when success
+                }
+                setTimeout(function(){optimize(folder, spSlice);}, 10000);
             }
         });
     }
