@@ -61,3 +61,38 @@
         </p>
     </div>
 </div>
+<div class="options-line">
+    <label style="margin-top: 8px;">Exclude subfolders</label>
+    <div class="form-field folder-select">
+        <div class="form-element">
+            <input class="folder" id="exclude" type="text" name="exclude" placeholder="Folder names, coma separated." size="49" value="{exclude}">
+        </div>
+        <p class="settings-info">
+            Input a list of folder names that you want to exclude from the optimization, coma separated, without quotes or other delimiters. For example, mybackups,deleted-images,old .
+        </p>
+    </div>
+</div>
+<div class="options-line">
+    <label style="margin-top: 8px;">Backup folder</label>
+    <div class="form-field folder-select">
+        <div class="form-element">
+            <input class="folder" id="backup_path" type="text" name="backup_path" placeholder="Backup folder" size="35">
+        </div>
+        <div class="form-element">
+            <a class="btn btn-confirm btn-select" id="select-backup-folder">Browse ...</a>
+        </div>
+        <p class="settings-info">
+            Save a backup copy of the images in this folder. You can choose the same folder, in this case a subfolder named ShortPixelBackups will automatically be created inside it, for the saved backups, and this folder will be ignored when optimizing.
+        </p>
+    </div>
+    <div id="backup-folder-picker" class="sp-shade">
+        <div class="sp-popup">
+            <div class="sp-folder-picker-title">Select the images folder</div>
+            <div class="sp-folder-picker"></div>
+            <div class="sp-popup-buttons">
+                <input type="button" class="btn btn-small btn-confirm select-folder" value="Select">
+                <input type="button" class="btn btn-small btn-cancel select-folder-cancel" value="Cancel" style="margin-left: 30px;">
+            </div>
+        </div>
+    </div>
+</div>

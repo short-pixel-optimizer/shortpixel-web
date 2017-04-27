@@ -1,0 +1,41 @@
+<div id="uploadCompare" class="sp-shade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:0;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Compare Images</h4>
+            </div>
+            <div class="modal-body" style="height:400px;padding:0;">
+                <img src="/img/spinner2.gif" id="modal-loading" style="position: absolute; left: 50%; top: 50%; margin-left:-71px;margin-top:-71px;z-index:2000;" />
+                <div class="shortpixel-slider" style="z-index:2000;">
+                    <div class="twentytwenty-container" id="compareSlider">
+                        <img class="uploadCompareOriginal"/>
+                        <img class="uploadCompareOptimized"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="uploadCompareSideBySide" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius:0;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Compare Images</h4>
+            </div>
+            <div class="modal-body" style="height:400px;padding:0;">
+                <div class="shortpixel-slider"style="text-align: center;">
+                    <div class="side-by-side" style="text-align: center; display:inline-block;">
+                        <img class="uploadCompareOriginal" src="/img/spinner2.gif" style="margin: 10px"/><br>
+                        Original
+                    </div>
+                    <div class="side-by-side" style="text-align: center; display:inline-block;">
+                        <img class="uploadCompareOptimized" src="/img/robot_lookleft_wink.png" style="margin: 10px"/><br>
+                        Optimized
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -57,6 +57,17 @@ form label {
     font-size: 20px;
     font-weight:bold;
 }
+.btn.btn-small {
+    padding: 8px 40px;
+}
+.btn.btn-confirm {
+    background-color: #1cbecb;
+    border-color: #1dba9b;
+}
+.btn.btn-cancel {
+    background-color: #969696;
+    border-color: #7c7c7c;
+}
 .btn.btn-optimize {
     background-color: #ee2824;
     border-color: #ac2925;
@@ -64,12 +75,15 @@ form label {
     vertical-align: middle;
 }
 .btn.btn-select {
-    background-color: #1cbecb;
-    border-color: #1dba9b;
     vertical-align: middle;
     margin-left: -5px;
     padding: 16px 40px;
     cursor: pointer;
+}
+.folder-select .btn.btn-select {
+    padding: 7px 30px 8px;
+    margin-bottom: 15px;
+    display: inline-block;
 }
 input.folder {
     background-color: #e2faff;
@@ -78,11 +92,85 @@ input.folder {
     line-height: 43px;
     padding: 5px 20px;
     font-size: 25px;
-    color: #aaa;
+    color: #757575;
     font-weight: bold;
     box-shadow: #796065 2px 2px 0px;
     vertical-align: middle;
     margin-left: 20px;
+}
+input.folder::placeholder {
+    color: #aaa;
+}
+input.folder::-webkit-input-placeholder,  /* Chrome/Opera/Safari */
+input.folder::-moz-placeholder, /* Firefox 19+ */
+input.folder:-ms-input-placeholder, /* IE 10+ */
+input.folder:-moz-placeholder { /* Firefox 18- */
+    color: #aaa;
+}
+
+input.folder.base-url {
+    margin: 20px 0;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 20px;
+}
+
+
+.url-radio {
+    list-style-type:none;
+    margin: 0;
+    padding:0;
+    display: inline-block;
+}
+.url-radio li {
+    float:left;
+    margin:0 5px 0 0;
+    width:100px;
+    height:40px;
+    position:relative;
+}
+.url-radio label, .url-radio input {
+    display:block;
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    height: 21px;
+}
+.url-radio input[type="radio"] {
+    opacity:0.011;
+    z-index:100;
+}
+.url-radio input[type="radio"]:checked + label.ur-confirm {
+    background: #24c76f;
+}
+.url-radio input[type="radio"]:checked + label.ur-ignore {
+    background: #dee60c;
+}
+.url-radio label {
+    padding:5px;
+    border:1px solid #CCC;
+    cursor:pointer;
+    z-index: 5;
+}
+.url-radio label:hover {
+    background:#DDD;
+}
+.confirm {
+    display: flex;
+}
+.confirm .message {
+    line-height: 34px;
+    margin-right: 15px;
+}
+
+
+.options-line .folder-select input.folder {
+    padding: 3px 12px;
+    font-size: 18px;
+    height: 32px;
+    margin: 0 0 15px;
 }
 div.form-element {
     display: inline-block;
@@ -101,11 +189,14 @@ div.text-column {
     color: #444444;
     text-decoration: none;
 }
-.success {
+.success, .confirm {
     color: #1dba9b;
 }
 .error {
     color: #d62728;
+}
+.confirm .url {
+    color: #444444;
 }
 /* ----------------- BULK PROGRESS BAR ----------------- */
 .progress {

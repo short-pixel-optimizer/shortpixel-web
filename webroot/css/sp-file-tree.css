@@ -1,4 +1,4 @@
-div.sp-folder-picker-shade {
+div.sp-shade {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 10; /* Sit on top */
@@ -10,13 +10,21 @@ div.sp-folder-picker-shade {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
-div.sp-folder-picker-popup {
+div.sp-popup {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
     width: 30%; /* Could be more or less, depending on screen size */
     min-width: 300px; /* Could be more or less, depending on screen size */
+    text-align: left;
+}
+.sp-popup-buttons {
+    text-align: right;
+}
+div.sp-popup.sp-confirm-popup {
+    width: 50%; /* Could be more or less, depending on screen size */
+    min-width: 600px; /* Could be more or less, depending on screen size */
     text-align: left;
 }
 div.sp-folder-picker-title {
@@ -26,7 +34,34 @@ div.sp-folder-picker {
     margin: 20px 0; /* 15% from the top and centered */
     border: 1px solid #888;
     max-height: 400px;
-    overflow: auto;}
+    overflow: auto;
+}
+div.sp-folder-results {
+    min-width: 600px;
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 20px;
+    border: 2px solid #c2d9dd;
+}
+.sp-folder-tree-title {
+    padding: 15px 0 15px;
+    font-size: 1.4em;
+    font-weight: bold;
+    background-color: #e2faff;
+}
+.sp-folder-tree-results {
+    text-align:left;
+    padding: 15px;
+}
+UL div.sp-file-status {
+    display:flex;
+    float:right;
+    font-size: 0.8em;
+}
+.sp-eye-open:before {
+    font: 400 17px/1 dashicons;
+    content: "\f177";
+}
 
 UL.jqueryFileTree LI.directory.selected {
     background-color: #209fd2;
@@ -47,6 +82,7 @@ UL.jqueryFileTree LI {
   margin: 0;
   white-space: nowrap;
   font-size: 1.4em;
+  min-height: 22px;
 }
 UL.jqueryFileTree LI.directory {
   background: url(../img/file-tree/directory.png) left top no-repeat;

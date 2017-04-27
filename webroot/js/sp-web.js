@@ -4,42 +4,108 @@
 (function($){
     $(document).ready(function(){
         $("#select-folder").click(function(){
-            $(".sp-folder-picker-shade").css("display", "block");
-            $(".sp-folder-picker").fileTree({
+            $("#folder-picker").css("display", "block");
+            $("#folder-picker .sp-folder-picker").fileTree({
                 script: ShortPixel.browseContent,
                 //folderEvent: 'dblclick',
                 multiFolder: false
                 //onlyFolders: true
             });
         });
-        $(".sp-folder-picker-popup input.select-folder-cancel").click(function(){
-            $(".sp-folder-picker-shade").css("display", "none");
+        $("#select-backup-folder").click(function(){
+            if($("#folder").val().length > 0) {
+                $("#backup-folder-picker").css("display", "block");
+                $("#backup-folder-picker .sp-folder-picker").fileTree({
+                    script: ShortPixel.browseContent,
+                    //folderEvent: 'dblclick',
+                    multiFolder: false,
+                    onlyFolders: true
+                });
+            } else {
+                alert("Please select folder to optimize first.");
+            }
         });
-        $(".sp-folder-picker-popup input.select-folder").click(function(){
-            var subPath = $("UL.jqueryFileTree LI.directory.selected A").attr("rel");
+        $("#folder-picker .sp-popup input.select-folder-cancel").click(function(){
+            $("#folder-picker").css("display", "none");
+        });
+        $("#backup-folder-picker .sp-popup input.select-folder-cancel").click(function(){
+            $("#backup-folder-picker").css("display", "none");
+        });
+        $("#folder-picker .sp-popup input.select-folder").click(function(){
+            var subPath = $("#folder-picker UL.jqueryFileTree LI.directory.selected A").attr("rel");
             if(subPath) {
                 var fullPath = subPath;
                 if(fullPath.slice(-1) == '/') fullPath = fullPath.slice(0, -1);
                 $("#folder").val(fullPath);
                 //if folder has custom options, set the corresponding options fields
+                $('.specific-options-msg').remove();
                 var options = ShortPixel.getFolderOptions({folder: subPath});
-                if(typeof options === 'object' && typeof options.lossy !== 'undefined') {
-                    $("#type-" + (options.lossy == 1 ? 'lossy' : 'lossless')).prop("checked", true);
-                    $("#removeExif").prop("checked", (options.keep_exif == 0 ? true : false));
-                    $("#cmyk2rgb").prop("checked", (options.cmyk2rgb == 1 ? true : false));
-                    $("#resize").prop("checked", (options.resize & 1 ? true : false));
-                    $("#width").val(options.resize_width);
-                    $("#height").val(options.resize_height);
-                    $("#resize_type_" + (options.resize & 2 ? 'inner' : 'outer')).prop("checked", true);
-                    $("#webp").prop("checked", (options.convertto == '+webp' ? true : false));
-                    $('<div><h3 class="success" id="info-message">Folder-specific options loaded, please check below.</h3></div>').insertBefore("#options-header");
-
+                if(typeof options === 'object') {
+                    if(typeof options.lossy !== 'undefined') {
+                        $("#type-" + (options.lossy == 1 ? 'lossy' : 'lossless')).prop("checked", true);
+                        $("#removeExif").prop("checked", (options.keep_exif == 0 ? true : false));
+                        $("#cmyk2rgb").prop("checked", (options.cmyk2rgb == 1 ? true : false));
+                        $("#resize").prop("checked", (options.resize & 1 ? true : false));
+                        $("#width").val(options.resize_width);
+                        $("#height").val(options.resize_height);
+                        $("#resize_type_" + (options.resize & 2 ? 'inner' : 'outer')).prop("checked", true);
+                        $("#webp").prop("checked", (options.convertto == '+webp' ? true : false));
+                        $("#exclude").val(options.exclude);
+                        $("#backup_path").val(options.backup_path);
+                        $('<div class="specific-options-msg"><h3 class="success" id="info-message">Folder-specific options loaded, please check below.</h3></div>').insertBefore("#options-header");
+                    }
+                    if(typeof options.base_url != 'undefined') {
+                        $("#base_url").val(options.base_url);
+                        $("#info_message span").html('Base URL: ' + options.base_url);
+                        $("#info_message").css("display", 'block');
+                    } else if(typeof options.base_url_detected != 'undefined') {
+                        $("#detected_base_url").val(options.base_url_detected);
+                        $("#confirm_message").css('display', 'block');
+                    }
                 }
-                $(".sp-folder-picker-shade").css("display", "none");
+                $("#folder-picker").css("display", "none");
             } else {
                 alert("Please select a folder from the list.");
             }
         });
+        $("#btn_ignore").click(function(){
+            $("#base_url").val($("#detected_base_url").html());
+            $("#confirm_message").css('display', 'none');
+        });
+        $("#btn_confirm").click(function(){
+            $('.base-url-msg').remove();
+            $("#info_message span").html('Base URL: ' + $("#detected_base_url").val());
+            $("#info_message").css('display', '');
+            $("#base_url").val($("#detected_base_url").val());
+            $("#confirm_message").css('display', 'none');
+        });
+        $("#backup-folder-picker .sp-popup input.select-folder").click(function(){
+            var subPath = $("#backup-folder-picker UL.jqueryFileTree LI.directory.selected A").attr("rel");
+            if(subPath) {
+                var fullPath = subPath;
+                if(fullPath.slice(-1) == '/') fullPath = fullPath.slice(0, -1);
+                var origPath = $("#folder").val();
+                if(fullPath.indexOf(origPath) !== -1) {
+                    fullPath = "ShortPixelBackups";
+                } else {
+                    fullPath = ShortPixel.pathToRelative(fullPath, origPath);
+
+                }
+                $("#backup_path").val(fullPath);
+                $("#backup-folder-picker").css("display", "none");
+            } else {
+                alert("Please select a folder from the list.");
+            }
+        });
+
+        $(".sp-folder-tree-results").fileTree({
+            root: $("#sp-folder-path").val(),
+            script: ShortPixel.browseContentExt,
+            //folderEvent: 'dblclick',
+            multiFolder: false
+            //onlyFolders: true
+        });
+
         ShortPixel.enableResize("#resize");
         $("#resize").change(function(){ ShortPixel.enableResize(this); });
     });
@@ -52,7 +118,16 @@ var errCount = 0;
 var ShortPixel = function() {
 
     function browseContent(browseData) {
+        return doBrowseContent(browseData, 'false');
+    }
+
+    function browseContentExt(browseData) {
+        return doBrowseContent(browseData, 'true');
+    }
+
+    function doBrowseContent(browseData, extended) {
         browseData.action = 'shortpixel_browse_content';
+        browseData.extended = extended;
         var browseResponse = "";
         jQuery.ajax({
             type: "POST",
@@ -64,6 +139,19 @@ var ShortPixel = function() {
             async: false
         });
         return browseResponse;
+    }
+
+    function pathToRelative(fullPath, origPath) {
+        var pa = origPath.replace(/^\//, "").split('/');
+        var ra = fullPath.replace(/^\//, "").split('/');
+        var res = [];
+        for(var i = 0, same = true; i < Math.max(pa.length, ra.length); i++) {
+            if(same && typeof pa[i] !== 'undefined' && typeof ra[i] !== 'undefined' && pa[i] == ra[i]) continue;
+            same = false;
+            if(typeof pa[i] !== 'undefined') res.unshift('..');
+            if(typeof ra[i] !== 'undefined') res.push(ra[i]);
+        }
+        return res.join('/');
     }
 
     function getFolderOptions(browseData) {
@@ -114,7 +202,10 @@ var ShortPixel = function() {
                     }
                     return;
                 }
-                if(data.status.code == 1) {
+                if(data.status.code == 2) { //folder is fully optimized (or empty )
+                    window.location.reload();
+                }
+                else if(data.status.code == 1) {
                     $("#doneFiles").val(parseInt($("#doneFiles").val()) + data.succeeded.length + data.failed.length + data.same.length)
                     var percent = Math.min(100.0, 100.0 * (parseInt($("#doneFiles").val())) / (parseInt($("#totalFiles").val())));
                     progressUpdate(percent.toFixed(1), "");
@@ -209,8 +300,8 @@ var ShortPixel = function() {
         var percent = item.PercentImprovement;
         var filename = item.SavedFile.split('/').pop();
         var ext = filename.split('.').pop().toLowerCase();
-        var thumb = (ext === 'pdf' ? "/img/logo-pdf.png" : item.LossyURL);
-        var bkThumb = (ext === 'pdf' ? "/img/logo-pdf.png" : item.OriginalURL);
+        var thumb = (ext === 'pdf' ? "img/logo-pdf.png" : item.LossyURL);
+        var bkThumb = (ext === 'pdf' ? "img/logo-pdf.png" : item.OriginalURL);
 
         var oldSlide = jQuery(".bulk-slider div.bulk-slide:first-child");
         if(oldSlide.attr("id") != "empty-slide") {
@@ -282,7 +373,9 @@ var ShortPixel = function() {
         emptyConsecutiveResponses : 0,
         //methods
         browseContent : browseContent,
+        browseContentExt : browseContentExt,
         getFolderOptions: getFolderOptions,
+        pathToRelative: pathToRelative,
         optimize : optimize,
         progressUpdate : progressUpdate,
         sliderUpdate : sliderUpdate,
