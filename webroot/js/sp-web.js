@@ -70,6 +70,7 @@
         });
         $("#btn_ignore").click(function(){
             $("#base_url").val($("#detected_base_url").html());
+            $("#info_message").css('display', 'none');
             $("#confirm_message").css('display', 'none');
         });
         $("#btn_confirm").click(function(){
