@@ -6,7 +6,7 @@
  */
 namespace ShortPixelWeb;
 
-const WEB_VERSION = "0.9.5";
+const WEB_VERSION = "0.9.5a";
 
 
 use ShortPixelWeb\XTemplate;
@@ -225,9 +225,9 @@ class ShortPixelWeb
                             echo "<li class='directory collapsed'>{$checkbox}<a rel='" . $htmlRel . "/'>" . $htmlName . "</a>";
                             echo "</li>";
                         } else if (!$onlyFolders || $onlyFiles) {
+                            echo "<li class='file ext_{$ext}'>{$checkbox}<a rel='" . $htmlRel . "/'>" . $htmlName . "</a>";
                             if($extended && isset($filesStatus->fileList[$file])) {
                                 $info = $filesStatus->fileList[$file];
-                                echo "<li class='file ext_{$ext}'>{$checkbox}<a rel='" . $htmlRel . "/'>" . $htmlName . "</a>";
                                 echo "<div class='sp-file-status'>";
                                 switch($info->status) {
                                     case 'success':
@@ -250,7 +250,6 @@ class ShortPixelWeb
                                 }
                                 echo "</div></li>";
                             }
-                            echo "</li>";
                         }
                     }
                 }

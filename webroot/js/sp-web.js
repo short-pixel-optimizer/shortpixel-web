@@ -223,16 +223,18 @@ var ShortPixel = function() {
                     } else {
                         ShortPixel.emptyConsecutiveResponses = 0;
                     }
-                    for(var i = 0; i < data.succeeded.length; i++) {
-                        item = data.succeeded[i];
-                        //preload the images
-                        if(item.OriginalURL.split('.').pop().toLowerCase() !== 'pdf') {
-                            item.imageOrig = new Image();
-                            item.imageOpt = new Image();
-                            item.imageOrig.src = item.OriginalURL;
-                            item.imageOpt.src = item.LossyURL;
+                    if(ShortPixel.sliderQueue.getLength() < 100) {
+                        for(var i = 0; i < data.succeeded.length; i++) {
+                            var item = data.succeeded[i];
+                            //preload the images
+                            if(item.OriginalURL.split('.').pop().toLowerCase() !== 'pdf') {
+                                item.imageOrig = new Image();
+                                item.imageOpt = new Image();
+                                item.imageOrig.src = item.OriginalURL;
+                                item.imageOpt.src = item.LossyURL;
+                            }
+                            ShortPixel.sliderQueue.enqueue(item);
                         }
-                        ShortPixel.sliderQueue.enqueue(data.succeeded[i]);
                     }
                     if(ShortPixel.sliderConsumerId === false) {
                         sliderUpdate();
