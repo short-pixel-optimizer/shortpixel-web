@@ -6,7 +6,7 @@
  */
 namespace ShortPixelWeb;
 
-const WEB_VERSION = "0.9.5a";
+const WEB_VERSION = "0.9.7";
 
 
 use ShortPixelWeb\XTemplate;
@@ -225,7 +225,7 @@ class ShortPixelWeb
                             echo "<li class='directory collapsed'>{$checkbox}<a rel='" . $htmlRel . "/'>" . $htmlName . "</a>";
                             echo "</li>";
                         } else if (!$onlyFolders || $onlyFiles) {
-                            echo "<li class='file ext_{$ext}'>{$checkbox}<a rel='" . $htmlRel . "/'>" . $htmlName . "</a>";
+                            echo "<li class='file ext_{$ext}'>";
                             if($extended && isset($filesStatus->fileList[$file])) {
                                 $info = $filesStatus->fileList[$file];
                                 echo "<div class='sp-file-status'>";
@@ -248,8 +248,9 @@ class ShortPixelWeb
                                         echo "Pending";
                                         break;
                                 }
-                                echo "</div></li>";
+                                echo "</div>";
                             }
+                            echo "{$checkbox}<a rel='" . $htmlRel . "/'>" . $htmlName . "</a></li>";
                         }
                     }
                 }
@@ -317,7 +318,9 @@ class ShortPixelWeb
         $status = \ShortPixel\folderInfo(dirname(dirname(__DIR__)) . $folder, true, false, $exclude);
         $this->xtpl->assign('folder', $folder);
 
-        if($status->status !== 'error' && $status->total == $status->succeeded + $status->failed) {
+        if(   $status->status !== 'error'
+           && (   $status->total == $status->succeeded + $status->failed
+               || isset($status->todo) && count($status->todo->files) == 0 && count($status->todo->filesPending) == 0)) {
             //success
             $this->xtpl->assign('total_files', $status->total);
             $this->xtpl->assign('succeeded_files', $status->succeeded);

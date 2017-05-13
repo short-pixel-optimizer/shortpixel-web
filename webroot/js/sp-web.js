@@ -337,7 +337,8 @@ var ShortPixel = function() {
             $(".bulk-slider-container").css("display", "block");
         } else {
             oldSlide.animate({ left: oldSlide.width() + oldSlide.position().left }, 'slow', 'swing', function(){
-                oldSlide.remove();
+                //oldSlide.remove();
+                jQuery(".bulk-slider div.bulk-slide:not(:last-child)").remove();
                 newSlide.fadeIn("slow");
             });
         }
