@@ -6,7 +6,7 @@
  */
 namespace ShortPixelWeb;
 
-const WEB_VERSION = "0.9.7";
+const WEB_VERSION = "0.9.8";
 
 
 use ShortPixelWeb\XTemplate;
