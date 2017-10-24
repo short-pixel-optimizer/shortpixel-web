@@ -1,0 +1,56 @@
+<!-- BEGIN: main -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>ShortPixel Optimizer</title>
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <link href="css/sp-web.css" rel="stylesheet">
+        <link href="css/sp-file-tree.css" rel="stylesheet">
+        <!-- BEGIN: glyphicons -->
+        <link href="css/glyphicons.css" rel="stylesheet">
+        <!-- END: glyphicons -->
+    </head>
+    <body>
+    <div class="box">
+        <div class="header-section">
+            <div class="header">
+                <a href="index.php">
+                    <img src="img/icon-128x128.png">
+                    <div class='title'>
+                        <span class="short">SHORT</span><span class="pixel">PIXEL</span> <span class="graytext">OPTIMIZER</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="content">
+            <!-- BEGIN: key -->
+            {FILE "apikey.html"}
+            <!-- END: key -->
+            <!-- BEGIN: form -->
+            {FILE "form.html"}
+            <!-- END: form -->
+            <!-- BEGIN: progress -->
+            {FILE "progress.html"}
+            <!-- END: progress -->
+            <!-- BEGIN: success -->
+            {FILE "success.html"}
+            <!-- END: success -->
+        </div>
+    </div>
+    <div class="links">
+        Version {web_version} | <a href="https://shortpixel.com/contact" target="_blank">Support</a> | <a href="https://shortpixel.com/about-and-team" target="_blank">About</a>
+    </div>
+
+    <script type='text/javascript' src='js/jquery-3.1.1.min.js'></script>
+    <script type='text/javascript' src='js/jquery.knob.js'></script>
+    <script type='text/javascript' src='js/sp-file-tree.js'></script>
+    <script type='text/javascript' src='js/sp-web.js'></script>
+    <!-- BEGIN: optimize_js -->
+    <script>
+        ShortPixel.optimize('{folder}');
+    </script>
+    <!-- END: optimize_js -->
+    </body>
+</html>
+<!-- END: main -->
