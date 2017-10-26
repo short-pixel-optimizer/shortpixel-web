@@ -9,6 +9,10 @@
             <b>Lossy compression: </b>lossy has a better compression rate than lossless compression.<br>The resulting image is identical with the original to the human eye. You can run a test for free
             <a href="https://shortpixel.com/online-image-compression" target="_blank">here</a>.
         </p>
+        <input class="type" id="type-glossy" type="radio" name="type" value="glossy" {glossy_checked}>Glossy
+        <p class="settings-info">
+            <b>Glossy compression: </b>glossy has a better compression rate than lossless compression but less than lossy.<br>The resulting image is identical with the original to the human eye even in large resolutions. Ideal for photographers.
+        </p>
         <input class="type" id="type-lossless" type="radio" name="type" value="lossless" {lossless_checked}>Lossless
         <p class="settings-info">
             <b>Lossless compression: </b> the shrunk image will be identical with the original and smaller in size.<br>In some rare cases you will need to use
@@ -39,8 +43,8 @@
     <label>Resize large images</label>
     <div class="form-field">
         <input class="resize" id="resize" type="checkbox" name="resize" {resize_checked}> to maximum
-        <input type="text" name="width" id="width" style="width:70px" value="{width}" disabled="disabled" placeholder="1024"> pixels wide ×
-        <input type="text" name="height" id="height" style="width:70px" value="{height}" disabled="disabled" placeholder="1024"> pixels high (original aspect ratio is preserved and image is not cropped)
+        <input type="text" name="width" id="width" style="width:70px" value="{width}" disabled="disabled"> pixels wide ×
+        <input type="text" name="height" id="height" style="width:70px" value="{height}" disabled="disabled"> pixels high (original aspect ratio is preserved and image is not cropped)
         <p class="settings-info">
             Recommended for large photos, like the ones taken with your phone. Saved space can go up to 80% or more after resizing.
         </p>

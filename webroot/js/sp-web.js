@@ -52,7 +52,8 @@
                         $("#webp").prop("checked", (options.convertto == '+webp' ? true : false));
                         $("#exclude").val(options.exclude);
                         $("#backup_path").val(options.backup_path);
-                        $('<div class="specific-options-msg"><h3 class="success" id="info-message">Folder-specific options loaded, please check below.</h3></div>').insertBefore("#options-header");
+                        $('<div class="specific-options-msg"><h3 class="success" id="info-message">Folder-specific options loaded, please check below.</h3>' +
+                          '</div>').insertBefore("#options-header");
                     }
                     if(typeof options.base_url != 'undefined') {
                         $("#base_url").val(options.base_url);
@@ -72,13 +73,16 @@
             $("#base_url").val($("#detected_base_url").html());
             $("#info_message").css('display', 'none');
             $("#confirm_message").css('display', 'none');
+            ShortPixel.addCronSuggestion(".specific-options-msg", $("#folder").val(), false);
         });
         $("#btn_confirm").click(function(){
             $('.base-url-msg').remove();
-            $("#info_message span").html('Base URL: ' + $("#detected_base_url").val());
+            var baseUrl = $("#detected_base_url").val();
+            $("#info_message span").html('Base URL: ' + baseUrl);
             $("#info_message").css('display', '');
-            $("#base_url").val($("#detected_base_url").val());
+            $("#base_url").val(baseUrl);
             $("#confirm_message").css('display', 'none');
+            ShortPixel.addCronSuggestion(".specific-options-msg", $("#folder").val(), baseUrl);
         });
         $("#backup-folder-picker .sp-popup input.select-folder").click(function(){
             var subPath = $("#backup-folder-picker UL.jqueryFileTree LI.directory.selected A").attr("rel");
@@ -87,15 +91,29 @@
                 if(fullPath.slice(-1) == '/') fullPath = fullPath.slice(0, -1);
                 var origPath = $("#folder").val();
                 if(fullPath.indexOf(origPath) !== -1) {
+                    // am putea adauga daca exista un subpath: (dar ne mai gandim)
+                    //var subPath = fullPath.substr(fullPath.indexOf(origPath) + origPath.length + 1)
+                    //subPath = subPath.length ? subPath + "/" : "";
+                    //fullPath = subPath + "ShortPixelBackups";
+
                     fullPath = "ShortPixelBackups";
                 } else {
                     fullPath = ShortPixel.pathToRelative(fullPath, origPath);
 
                 }
                 $("#backup_path").val(fullPath);
+                $("#backup_path").trigger("change");
                 $("#backup-folder-picker").css("display", "none");
             } else {
                 alert("Please select a folder from the list.");
+            }
+        });
+
+        $("#backup_path").change(function(evt){
+            var bk_path = $(evt.target).val().trim();
+            //a non-relative path should end in /ShortPixelBackups
+            if(bk_path.indexOf("..") !== 0 && bk_path.lastIndexOf("ShortPixelBackups") !== bk_path.length - 17) {
+                $("#backup_path").val(bk_path + "/ShortPixelBackups");
             }
         });
 
@@ -174,6 +192,14 @@ var ShortPixel = function() {
         }
     }
 
+    function addCronSuggestion(query, fullPath, baseUrl) {
+        $(query).html($(query).html()
+            + '<p class="code-advice">You can also optimize this folder by configuring a job in the crontab like this:<br>' +
+            "<code>0,15,30,45 * * * * runuser -l " + ShortPixel.CURRENT_OS_USER + " -s /bin/sh -c 'php " +
+            ShortPixel.OS_PATH + "/shortpixel-web/vendor/shortpixel/shortpixel-php/lib/cmdShortpixelOptimize.php --apiKey=" + ShortPixel.API_KEY +
+            " --folder=" + ShortPixel.OS_PATH + fullPath + "'</code></p>");
+    }
+
     function optimize(folder, slice) {
         $.ajax({
             type: "POST",
@@ -241,6 +267,10 @@ var ShortPixel = function() {
                         sliderUpdate();
                         ShortPixel.sliderConsumerId = setInterval(sliderUpdate, ShortPixel.sliderFrequencyMs);
                     }
+
+                    ShortPixel.addCronSuggestion(".progress-code-advice-empty", folder, false);
+                    $(".progress-code-advice").removeClass("progress-code-advice-empty");
+
                     setTimeout(function(){optimize(folder, spSlice);}, 1000);
                 }
                 else if(data.status.code == 0)
@@ -380,6 +410,7 @@ var ShortPixel = function() {
         browseContentExt : browseContentExt,
         getFolderOptions: getFolderOptions,
         pathToRelative: pathToRelative,
+        addCronSuggestion: addCronSuggestion,
         optimize : optimize,
         progressUpdate : progressUpdate,
         sliderUpdate : sliderUpdate,

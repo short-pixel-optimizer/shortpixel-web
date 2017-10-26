@@ -198,6 +198,30 @@ div.text-column {
 .confirm .url {
     color: #444444;
 }
+p.code-advice {
+    font-weight: normal;
+    color: #222222;
+    width: 80%;
+    margin: 15px auto;
+    text-align: left;
+}
+p.code-advice code {
+    display: block;
+    line-height: 1.6em;
+    border: 1px solid #0d8a8b;
+    padding: 5px 10px;
+    margin-top: 10px;
+    color: #0d8a8b;
+    background-color: #eee;
+}
+div.progress-code-advice {
+    padding-top: 10px;
+    border-top: 1px solid #999;
+    margin-top: 20px;
+}
+div.progress-code-advice-empty {
+    display:none;
+}
 /* ----------------- BULK PROGRESS BAR ----------------- */
 .progress {
     background-color: #ecedee;

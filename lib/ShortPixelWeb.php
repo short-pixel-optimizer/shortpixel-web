@@ -6,30 +6,27 @@
  */
 namespace ShortPixelWeb;
 
-const WEB_VERSION = "0.9.8";
+const WEB_VERSION = "1.0.1";
 
 
 use ShortPixelWeb\XTemplate;
 
+require_once("../vendor/autoload.php");
+
 class ShortPixelWeb
 {
-    private $settings;
+    private $settingsHandler;
     private $xtpl;
-    private $INI_PATH;
-    const FOLDER_INI_NAME = '.sp-options';
 
     function __construct() {
         $this->xtpl = new XTemplate('main.html', __DIR__ . '/ShortPixelWeb/tpl');
-        $this->INI_PATH = dirname(__DIR__). '/shortpixel.ini';
+        $this->settingsHandler = new \ShortPixel\Settings(dirname(__DIR__). '/shortpixel.ini');
     }
 
     function bootstrap() {
         date_default_timezone_set("UTC");
         $settings = array();
         $apiKey = false;
-        if(file_exists($this->INI_PATH)) {
-            $this->settings = parse_ini_file($this->INI_PATH);
-        }
         //die(phpinfo());
 
         $this->handleRequest();
@@ -37,7 +34,7 @@ class ShortPixelWeb
 
     function handleRequest() {
         if(isset($_POST['API_KEY'])) {
-            $this->renderStartPage($this->persistApiKeyAndSettings($_POST));
+            $this->renderStartPage($this->settingsHandler->persistApiKeyAndSettings($_POST));
         }
         elseif(isset($_POST['action'])) {
             switch($_POST['action']) {
@@ -63,60 +60,6 @@ class ShortPixelWeb
         }
     }
 
-    function persistApiKeyAndSettings($data) {
-        if(isset($data['API_KEY']) && strlen($data['API_KEY']) == 20) {
-            if(file_exists($this->INI_PATH)) {
-                unlink($this->INI_PATH);
-            }
-            $strSettings = "[SHORTPIXEL]\nAPI_KEY=" . $data['API_KEY'] . "\n";
-            $settings = $this->post2options($data);
-            foreach($settings as $key => $val) {
-                $strSettings .= $key . '=' . $val . "\n";
-            }
-            $settings['API_KEY'] = $data['API_KEY'];
-
-            if(!@file_put_contents($this->INI_PATH, $strSettings)) {
-                return array("error" => "Could not write properties file " . $this->INI_PATH . ". Please check rights.");
-            }
-            $this->settings = $settings;
-            return array("success" => "API Key set: " . $data['API_KEY']);
-        } else {
-            return array("error" => "API Key should be 20 characters long.");
-        }
-    }
-
-    function persistFolderSettings($data, $path) {
-        $strSettings = "[SHORTPIXEL]\n";
-        foreach($this->post2options($data) as $key => $val) {
-            if(!in_array($key, array("API_KEY", "folder", "")))
-                $strSettings .= $key . '=' . $val . "\n";
-        }
-        return @file_put_contents($path . '/' . self::FOLDER_INI_NAME, $strSettings);
-    }
-
-    function post2options($post) {
-        $data = array();
-        if(isset($post['type'])) $data['lossy'] = $post['type'] == 'lossy' ? 1 : 0;
-        $data['keep_exif'] = isset($post['removeExif']) ? 0 : 1;
-        $data['cmyk2rgb'] = isset($post['cmyk2rgb']) ? 1 : 0;
-        $data['resize'] = isset($post['resize']) ? ($post['resize_type'] == 'outer' ? 1 : 3) : 0;
-        if($data['resize'] && isset($post['width'])) $data['resize_width'] = $post['width'];
-        if($data['resize'] && isset($post['height'])) $data['resize_height'] = $post['height'];
-        $data['convertto'] = isset($post['webp']) ? '+webp' : '';
-        if(isset($post['backup_path'])) {
-            $data['backup_path'] = $post['backup_path'];
-        }
-        if(isset($post['exclude'])) {
-            $data['exclude'] = $post['exclude'];
-        }
-        if(isset($post['base_url']) && strlen($post['base_url'])) {
-            $data['base_url'] = rtrim($post['base_url'], '/');
-        } elseif (isset($post['change_base_url']) && strlen($post['change_base_url'])) {
-            $data['base_url'] = rtrim($post['change_base_url'], '/');
-        }
-        return $data;
-    }
-
     function pathToRelative($path, $reference) {
         $pa = explode('/', trim($path, '/'));
         $ra = explode('/', trim($reference, '/'));
@@ -137,7 +80,7 @@ class ShortPixelWeb
 
     function renderFolderOptionsData($folder) {
         $folderPath = $this->normalizePath($this->folderFullPath($folder));
-        $optionsPath = $folderPath . '/' . self::FOLDER_INI_NAME;
+        $optionsPath = $folderPath . '/' . \ShortPixel\Settings::FOLDER_INI_NAME;
         $options = array();
         if(file_exists($optionsPath)) {
             $options = parse_ini_file($optionsPath);
@@ -161,7 +104,7 @@ class ShortPixelWeb
     function searchBackupFolder($postDir) {
         $optionsDir = $postDir; $optionsParents = $siblings = '';
         while(file_exists($optionsDir . '/' . \ShortPixel\opt("persist_name"))){
-            $folderIni = $optionsDir . '/' . self::FOLDER_INI_NAME;
+            $folderIni = $optionsDir . '/' . \ShortPixel\Settings::FOLDER_INI_NAME;
             if(file_exists($folderIni)) {
                 $folderOptions = parse_ini_file($folderIni);
                 if(isset($folderOptions['backup_path'])) {
@@ -264,7 +207,8 @@ class ShortPixelWeb
         $this->xtpl->assign('options_type', $type);
         $this->setupWrapper(false);
         $this->xtpl->assign('lossy_checked', \ShortPixel\ShortPixel::opt('lossy') == 1 ? 'checked' : '');
-        $this->xtpl->assign('lossless_checked', \ShortPixel\ShortPixel::opt('lossy') == 1 ? '' : 'checked');
+        $this->xtpl->assign('glossy_checked', \ShortPixel\ShortPixel::opt('lossy') == 2 ? 'checked' : '');
+        $this->xtpl->assign('lossless_checked', \ShortPixel\ShortPixel::opt('lossy') == 0 ? 'checked' : '');
         $this->xtpl->assign('cmyk2rgb_checked', \ShortPixel\ShortPixel::opt('cmyk2rgb') == 1 ? 'checked' : '');
         $this->xtpl->assign('remove_exif_checked', \ShortPixel\ShortPixel::opt('keep_exif') == 1 ? '' : 'checked');
         $this->xtpl->assign('resize_checked', \ShortPixel\ShortPixel::opt('resize') ? 'checked' : '');
@@ -275,10 +219,24 @@ class ShortPixelWeb
         $this->xtpl->assign('resize_inner_checked', \ShortPixel\ShortPixel::opt('resize') & 2 ? 'checked' : '');
     }
 
+    function initJSConstants() {
+        $username = '[WEB SERVER USER]';
+        if(function_exists('posix_geteuid')) {
+            $pwu_data = posix_getpwuid(posix_geteuid());
+            $username = $pwu_data['name'];
+        }
+        $this->xtpl->assign("current_os_user", $username);
+        $this->xtpl->assign("shortpixel_os_path", dirname(dirname(__DIR__)));
+        $this->xtpl->assign("shortpixel_api_key", $this->settingsHandler->get("API_KEY"));
+    }
+
+
     function renderStartPage($messages) {
-        $apiKey = false;
-        if(isset($this->settings["API_KEY"])) {
-            $apiKey = $this->settings["API_KEY"];
+        $apiKey = $this->settingsHandler->get("API_KEY");
+        $this->initJSConstants();
+        if( !$apiKey && isset($_SESSION["ShortPixelWebSettings"])) {
+            //for interoperability with a main site, for example ShortPixel.com :) - will also pass user home folder.
+            $this->settingsHandler->addOptions($_SESSION["ShortPixelWebSettings"]);
         }
         if($apiKey) {
             $this->renderSettings('Folder');
@@ -300,6 +258,7 @@ class ShortPixelWeb
             $this->renderStartPage(array('error' => "Please select a folder."));
             return;
         }
+        $this->initJSConstants();
         if(isset($optData['type'])) {
             //the action is from the Optimize now button and it has the settings, persist them in the .sp-options file
             if(isset($optData['backup_path'])) {
@@ -309,8 +268,8 @@ class ShortPixelWeb
                 $this->xtpl->assign('exclude', $optData['exclude']);
                 $exclude = explode(',', $optData['exclude']);
             }
-            if(!$this->persistFolderSettings($optData, $folderPath)){
-                $this->xtpl->assign('error', "Could not write options file " . $folderPath . '/' . self::FOLDER_INI_NAME . ". Please check rights.");
+            if(!$this->settingsHandler->persistFolderSettings($optData, $folderPath)){
+                $this->xtpl->assign('error', "Could not write options file " . $folderPath . '/' . \ShortPixel\Settings::FOLDER_INI_NAME . ". Please check rights.");
                 $this->xtpl->parse('main.progress.error');
             }
         }
@@ -346,7 +305,7 @@ class ShortPixelWeb
     }
 
     function renderMain() {
-        $this->xtpl->assign('web_version', WEB_VERSION);
+        $this->xtpl->assign('web_version', WEB_VERSION . ' (SDK ' . \ShortPixel\ShortPixel::VERSION . ')');
         $this->xtpl->parse('main');
         $this->xtpl->out('main');
     }
@@ -390,21 +349,10 @@ class ShortPixelWeb
 
     function setupWrapper($path) {
         //TODO schimba asta cu composer
-        require_once("../vendor/autoload.php");
-        \ShortPixel\setKey($this->settings["API_KEY"]);
-        $opts = $this->readOptions($path);
+        \ShortPixel\setKey($this->settingsHandler->get("API_KEY"));
+        $opts = $this->settingsHandler->readOptions($path);
         $opts["persist_type"] = "text";
         \ShortPixel\ShortPixel::setOptions($opts);
-    }
-
-    function readOptions($path) {
-        $options = $this->settings;
-        if($path && file_exists($path . '/' . self::FOLDER_INI_NAME)) {
-            $options = array_merge($options, parse_ini_file($path . '/' . self::FOLDER_INI_NAME));
-        }
-        unset($options['API_KEY']);
-        return $options;
-
     }
 
     function normalizePath($path) {
