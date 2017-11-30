@@ -124,63 +124,56 @@
             multiFolder: false
             //onlyFolders: true
         });
-
+        
+        // folder optimized compare slider 
         $(".sp-folder-tree-results .optimized-view").click(function(e) {
-            e.preventDefault();
-            console.log('clicked');
+            // e.preventDefault();
             var modal = $('#uploadCompare');
             var view = $(this);
+
             $("#compareSlider").html('<img class="uploadCompareOriginal"/><img class="uploadCompareOptimized"/>');
             var imgOpt = $(".uploadCompareOptimized", modal);
             var imgOrig = $(".uploadCompareOriginal", modal);
-            $(".uploadCompareOriginal", modal).attr("src", view.data('original'));
-            var width, origWidth = origWidth = 400;
-            var height = 400;
-            setTimeout(function(){
+            
+            imgOrig.attr("src", view.data('original'));
+            imgOpt.attr("src", view.data('optimized'));
+            
+            imgOrig.on('load', function() {
                 $(window).trigger('resize');
-            }, 1000);
-            var loaded = false;
-            imgOrig.on('load', function(){
+            });
+            imgOpt.on('load', function() {
                 $(window).trigger('resize');
                 var origWidth = this.width;
-                loaded = true;
-            });
-            imgOpt.on('load', function(){
-                $(window).trigger('resize');
-                width = this.width;
-                height = this.height;                
-                //calculate the modal size
-                width = Math.max(350, Math.min(800, (width < 350 ? (width + 25) * 2 : (height < 150 ? width + 25 : width))));
-                // height = Math.max(150, height * width / origWidth);
-                height = screen.height - 200;
-
-                console.log(width);
-                console.log(height);
-
-                $(".modal-dialog", modal).css("width", width);
-                $(".shortpixel-slider", modal).css("width", width);
-                // $(".modal-body", modal).css("height", height);
-
-                // if(loaded) {
+                var origHeight = this.height;
+                var sideBySide = (origHeight < 150 || origWidth < 350);
+                if(sideBySide) {
+                    modal = $('#uploadCompareSideBySide');
+                    modal.addClass('in');
+                    $(".modal-dialog", modal).css("width", origWidth + 200);
+                    $('.modal-content').css("height", origHeight + 200);
+                    // $(".shortpixel-slider", modal).css("width", origWidth +200).css("height", origHeight + 200);
+                    modal.show();
+                    $('.side-by-side .uploadCompareOriginal').attr("src", view.data('original'));
+                    $('.side-by-side .uploadCompareOptimized').attr("src", view.data('optimized'));
+                } else {
                     modal.show();
                     $('#compareSlider').twentytwenty({
                         slider_move: "mousemove"
-                    })
+                    });
                     $('#modal-loading').hide();
-                // }
+                    $('.modal-dialog').css('width', $('.uploadCompareOptimized').width());
+                }
             });
-            imgOpt.attr("src", view.data('optimized'));
-
-
-            
-            // displayOptimizationComparerPopup(view.data("optimizeTime"), view.data("width"), view.data("height"),$(this).data("original"), $(this).data("optimized"));
-            
-
+            setTimeout(function(){
+                $(window).trigger('resize');
+            }, 1000);
         });
         $('.modal-content .close').on('click', function(e) {
             $('#uploadCompare').hide();
+            $('#uploadCompareSideBySide').hide().removeClass('in');
             $("#compareSlider").unwrap();
             $("#compareSlider").html('');
+            $('#modal-loading').show();
         });
         ShortPixel.enableResize("#resize");
         $("#resize").change(function(){ ShortPixel.enableResize(this); });
