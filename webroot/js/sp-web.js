@@ -125,6 +125,63 @@
             //onlyFolders: true
         });
 
+        $(".sp-folder-tree-results .optimized-view").click(function(e) {
+            e.preventDefault();
+            console.log('clicked');
+            var modal = $('#uploadCompare');
+            var view = $(this);
+            $("#compareSlider").html('<img class="uploadCompareOriginal"/><img class="uploadCompareOptimized"/>');
+            var imgOpt = $(".uploadCompareOptimized", modal);
+            var imgOrig = $(".uploadCompareOriginal", modal);
+            $(".uploadCompareOriginal", modal).attr("src", view.data('original'));
+            var width, origWidth = origWidth = 400;
+            var height = 400;
+            setTimeout(function(){
+                $(window).trigger('resize');
+            }, 1000);
+            var loaded = false;
+            imgOrig.on('load', function(){
+                $(window).trigger('resize');
+                var origWidth = this.width;
+                loaded = true;
+            });
+            imgOpt.on('load', function(){
+                $(window).trigger('resize');
+                width = this.width;
+                height = this.height;                
+                //calculate the modal size
+                width = Math.max(350, Math.min(800, (width < 350 ? (width + 25) * 2 : (height < 150 ? width + 25 : width))));
+                // height = Math.max(150, height * width / origWidth);
+                height = screen.height - 200;
+
+                console.log(width);
+                console.log(height);
+
+                $(".modal-dialog", modal).css("width", width);
+                $(".shortpixel-slider", modal).css("width", width);
+                // $(".modal-body", modal).css("height", height);
+
+                // if(loaded) {
+                    modal.show();
+                    $('#compareSlider').twentytwenty({
+                        slider_move: "mousemove"
+                    })
+                    $('#modal-loading').hide();
+                // }
+            });
+            imgOpt.attr("src", view.data('optimized'));
+
+
+            
+            // displayOptimizationComparerPopup(view.data("optimizeTime"), view.data("width"), view.data("height"),$(this).data("original"), $(this).data("optimized"));
+            
+
+        });
+        $('.modal-content .close').on('click', function(e) {
+            $('#uploadCompare').hide();
+            $("#compareSlider").unwrap();
+            $("#compareSlider").html('');
+        });
         ShortPixel.enableResize("#resize");
         $("#resize").change(function(){ ShortPixel.enableResize(this); });
     });

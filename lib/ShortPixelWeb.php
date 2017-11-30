@@ -178,7 +178,7 @@ class ShortPixelWeb
                                             echo "Optimized by " . $info->percent . "% (" . $info->compressionType . ")";
                                             $backupPath = $backupFolder . '/' . $file;
                                             if($backupFolder && $backupUrl && file_exists($backupPath)) {
-                                                $originalUrl = $backupUrl . '/' . $file; $optimizedUrl = $backupPath;
+                                                $originalUrl = $backupUrl . '/' . $file; $optimizedUrl = $backupUrl . '/' . $file;
                                                 echo "<a class='optimized-view' href='#' data-original='" . $originalUrl . "' data-optimized='" . $optimizedUrl . "' title='Compare images for " . $file . " (original vs. lossy)' style='display: inline;'>";
                                                 echo "<span class='dashicons sp-eye-open' style='cursor:pointer;font-size:1.2em'></span>";
                                                 echo "</a>";
@@ -286,6 +286,7 @@ class ShortPixelWeb
             $this->xtpl->assign('failed_files', $status->failed);
             $this->xtpl->parse('main.glyphicons');
             $this->xtpl->parse('main.success');
+            $this->xtpl->parse('main.comparer');
         } else {
             if($status->status == 'error') {
                 $this->xtpl->assign('error', $status->message . " (code: " . $status->code . ")");
