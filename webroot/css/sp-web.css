@@ -1,4 +1,10 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat:700');
+@font-face {
+    font-family: 'montserratbold';
+    src: url('../fonts/montserrat-bold-webfont.woff2') format('woff2'),
+         url('../fonts/montserrat-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 body {
     padding:10px 100px;
     background-color: #cee5e9;
@@ -431,7 +437,7 @@ input[type=checkbox]:checked:before {
 .modal-content h4,
 .modal-content h5,
 .modal-content h6 {
-    font-family: montserrat;
+    font-family: montserratbold;
     text-transform: uppercase;
     letter-spacing: .075em;
 }
