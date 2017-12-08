@@ -189,8 +189,8 @@ class ShortPixelWeb
                                                     $originalUrl =  $backupUrl . $backupSlug .$subFolder.'/'. $file; //remove backup directory for original picture
                                                     $optimizedUrl = $backupUrl . $subFolder.'/'. $file;
                                                 } else {
-                                                    $originalUrl = $backupUrl . '/' . $file; 
-                                                    $optimizedUrl = $backupUrl . '/' . $backupDir .'/' . $file;
+                                                    $optimizedUrl = $backupUrl . '/' . $file; 
+                                                    $originalUrl = $backupUrl . '/' . $backupDir .'/' . $file;
                                                 }
 
                                                 echo "<a class='optimized-view' href='#' data-original='" . $originalUrl . "' data-optimized='" . $optimizedUrl . "' title='Compare images for " . $file . " (original vs. lossy)' style='display: inline;'>";
