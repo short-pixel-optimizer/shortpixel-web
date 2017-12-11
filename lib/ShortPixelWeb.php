@@ -186,11 +186,11 @@ class ShortPixelWeb
                                                     $end = $matches[0][1][1];
                                                     $backupSlug = substr($backupDir,$start, $end-$start);                                                
                                                     $subFolder = substr($backupDir,$end, strlen($backupDir));
-                                                    $originalUrl =  $backupUrl . $backupSlug .$subFolder.'/'. $file; //remove backup directory for original picture
-                                                    $optimizedUrl = $backupUrl . $subFolder.'/'. $file;
+                                                    $originalUrl =  $backupUrl . '/' . $file;
+                                                    $optimizedUrl = str_replace($backupSlug,'',$backupUrl) . '/'. $file;
                                                 } else {
-                                                    $optimizedUrl = $backupUrl . '/' . $file; 
-                                                    $originalUrl = $backupUrl . '/' . $backupDir .'/' . $file;
+                                                    $optimizedUrl = substr($backupUrl,0,strrpos($backupUrl,"/")) . '/' . $file;
+                                                    $originalUrl = $backupUrl .'/' . $file;
                                                 }
 
                                                 echo "<a class='optimized-view' href='#' data-original='" . $originalUrl . "' data-optimized='" . $optimizedUrl . "' title='Compare images for " . $file . " (original vs. lossy)' style='display: inline;'>";
