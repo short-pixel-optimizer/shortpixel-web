@@ -6,7 +6,7 @@
  */
 namespace ShortPixelWeb;
 
-const WEB_VERSION = "1.0.1";
+const WEB_VERSION = "1.0.2";
 
 
 use ShortPixelWeb\XTemplate;
@@ -17,10 +17,12 @@ class ShortPixelWeb
 {
     private $settingsHandler;
     private $xtpl;
+    private $basePath;
 
     function __construct() {
         $this->xtpl = new XTemplate('main.html', __DIR__ . '/ShortPixelWeb/tpl');
         $this->settingsHandler = new \ShortPixel\Settings(dirname(__DIR__). '/shortpixel.ini');
+        $this->basePath = str_replace(DIRECTORY_SEPARATOR, '/', dirname(dirname(__DIR__))); // get that damn separator straight on Windows too :))
     }
 
     function bootstrap() {
@@ -74,8 +76,7 @@ class ShortPixelWeb
     }
 
     private function folderFullPath($folder) {
-        $root = dirname(dirname(__DIR__));
-        return rawurldecode($root.$folder );
+        return rawurldecode($this->basePath . $folder );
     }
 
     function renderFolderOptionsData($folder) {
@@ -178,7 +179,7 @@ class ShortPixelWeb
                                             echo "Optimized by " . $info->percent . "% (" . $info->compressionType . ")";
                                             $backupPath = $backupFolder . '/' . $file;
                                             if($backupFolder && $backupUrl && file_exists($backupPath)) {
-                                                $originalUrl = $backupUrl . '/' . $file; $optimizedUrl = $backupPath;
+                                                $originalUrl = $backupUrl . '/' . $file; $optimizedUrl = $backupUrl . '/' . $file;
                                                 echo "<a class='optimized-view' href='#' data-original='" . $originalUrl . "' data-optimized='" . $optimizedUrl . "' title='Compare images for " . $file . " (original vs. lossy)' style='display: inline;'>";
                                                 echo "<span class='dashicons sp-eye-open' style='cursor:pointer;font-size:1.2em'></span>";
                                                 echo "</a>";
@@ -226,7 +227,7 @@ class ShortPixelWeb
             $username = $pwu_data['name'];
         }
         $this->xtpl->assign("current_os_user", $username);
-        $this->xtpl->assign("shortpixel_os_path", dirname(dirname(__DIR__)));
+        $this->xtpl->assign("shortpixel_os_path", $this->basePath); // get that damn separator straight on Windows too :))
         $this->xtpl->assign("shortpixel_api_key", $this->settingsHandler->get("API_KEY"));
     }
 
@@ -253,7 +254,7 @@ class ShortPixelWeb
     function renderOptimizeNow($optData) {
         $folder = $optData['folder'];
         $exclude = array();
-        $folderPath = $this->normalizePath(dirname(dirname(__DIR__)) . $folder);
+        $folderPath = $this->normalizePath($this->basePath . $folder);
         if(!strlen($folder)) {
             $this->renderStartPage(array('error' => "Please select a folder."));
             return;
@@ -274,7 +275,7 @@ class ShortPixelWeb
             }
         }
         $this->setupWrapper($folderPath);
-        $status = \ShortPixel\folderInfo(dirname(dirname(__DIR__)) . $folder, true, false, $exclude);
+        $status = \ShortPixel\folderInfo($this->basePath . $folder, true, false, $exclude);
         $this->xtpl->assign('folder', $folder);
 
         if(   $status->status !== 'error'
@@ -286,6 +287,7 @@ class ShortPixelWeb
             $this->xtpl->assign('failed_files', $status->failed);
             $this->xtpl->parse('main.glyphicons');
             $this->xtpl->parse('main.success');
+            $this->xtpl->parse('main.comparer');
         } else {
             if($status->status == 'error') {
                 $this->xtpl->assign('error', $status->message . " (code: " . $status->code . ")");
@@ -318,7 +320,7 @@ class ShortPixelWeb
             $timeLimit = 60;
         }
 
-        $folderPath = dirname(dirname(__DIR__)) . $folder;
+        $folderPath = $this->basePath . $folder; // get that damn separator straight on Windows too :))
         $this->setupWrapper($folderPath);
         $slice = $slice ? $slice : \ShortPixel\ShortPixel::MAX_ALLOWED_FILES_PER_CALL;
 
