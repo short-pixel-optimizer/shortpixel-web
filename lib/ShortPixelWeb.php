@@ -181,7 +181,6 @@ class ShortPixelWeb
                                             $backupPath = $backupFolder . '/' . $file;
 
                                             if($backupFolder && $backupUrl && file_exists($backupPath)) {
-<<<<<<< HEAD
                                                 preg_match_all('#/#', $backupDir,$matches, PREG_OFFSET_CAPTURE);  
                                                 if(!empty($matches[0])) { //if a subfolder
                                                     $start = $matches[0][0][1];
@@ -195,9 +194,6 @@ class ShortPixelWeb
                                                     $originalUrl = $backupUrl . '/' . $backupDir .'/' . $file;
                                                 }
 
-=======
-                                                $originalUrl = $backupUrl . '/' . $file; $optimizedUrl = $backupUrl . '/' . $file;
->>>>>>> 63a71c3b46ea062883012eb7085df9d914610e3c
                                                 echo "<a class='optimized-view' href='#' data-original='" . $originalUrl . "' data-optimized='" . $optimizedUrl . "' title='Compare images for " . $file . " (original vs. lossy)' style='display: inline;'>";
                                                 echo "<span class='dashicons sp-eye-open' style='cursor:pointer;font-size:1.2em'></span>";
                                                 echo "</a>";
