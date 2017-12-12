@@ -124,47 +124,23 @@
             multiFolder: false
             //onlyFolders: true
         }, function(file) {
-            var modal = $('#uploadCompare');
-            var view = $(`a[rel='${file}'`).siblings('.sp-file-status').children('.optimized-view');
+            // do something when a file is clicked
+            console.log("I clicked a file!");
+            if(file != undefined)
+                showModal(file);
+            
 
-            $("#compareSlider").html('<img class="uploadCompareOriginal"/><img class="uploadCompareOptimized"/>');
-            var imgOpt = $(".uploadCompareOptimized", modal);
-            var imgOrig = $(".uploadCompareOriginal", modal);
-            
-            imgOrig.attr("src", view.data('original'));
-            imgOpt.attr("src", view.data('optimized'));
-            
-            imgOrig.on('load', function() {
-                $(window).trigger('resize');
-            });
-            imgOpt.on('load', function() {
-                $(window).trigger('resize');
-                var origWidth = this.width;
-                var origHeight = this.height;
-                var sideBySide = (origHeight < 150 || origWidth < 350);
-                if(sideBySide) {
-                    modal = $('#uploadCompareSideBySide');
-                    modal.addClass('in sp-shade');
-                    $(".modal-dialog", modal).css("width", origWidth + 200);
-                    $('.modal-content').css("height", origHeight + 150);
-                    // $(".shortpixel-slider", modal).css("width", origWidth +200).css("height", origHeight + 200);
-                    modal.show();
-                    $('.side-by-side .uploadCompareOriginal').attr("src", view.data('original'));
-                    $('.side-by-side .uploadCompareOptimized').attr("src", view.data('optimized'));
-                } else {
-                    modal.show();
-                    $('#compareSlider').twentytwenty({
-                        slider_move: "mousemove"
-                    });
-                    $('#modal-loading').hide();
-                    $('.modal-dialog').css('width', $('.uploadCompareOptimized').width());
-                    $('.modal-body').css('height', $('.uploadCompareOptimized').height());
-                }
-            });
-            setTimeout(function(){
-                $(window).trigger('resize');
-            }, 1000);
         }, function(dir){
+            console.log("I clicked a folder!");
+            // do something when a dir is clicked
+        });
+        
+        // folder optimized compare slider 
+        $(".sp-folder-tree-results .optimized-view").click(function(e) {
+            e.preventDefault();
+            var url = $(this).attr('data-optimized');
+            var file = url.substring(url.indexOf(window.location.host) + window.location.host.length);
+            showModal(file);
         });
         $('#uploadCompareSideBySide').on('click', function(e) {
            if(e.target == this) {
@@ -190,6 +166,49 @@
         ShortPixel.enableResize("#resize");
         $("#resize").change(function(){ ShortPixel.enableResize(this); });
     });
+    
+    function showModal(file) {
+        var modal = $('#uploadCompare');
+        var view = $(`a[rel='${file}'`).siblings('.sp-file-status').children('.optimized-view');
+
+        $("#compareSlider").html('<img class="uploadCompareOriginal"/><img class="uploadCompareOptimized"/>');
+        var imgOpt = $(".uploadCompareOptimized", modal);
+        var imgOrig = $(".uploadCompareOriginal", modal);
+        
+        imgOrig.attr("src", view.data('original'));
+        imgOpt.attr("src", view.data('optimized'));
+        
+        imgOrig.on('load', function() {
+            $(window).trigger('resize');
+        });
+        imgOpt.on('load', function() {
+            $(window).trigger('resize');
+            var origWidth = this.width;
+            var origHeight = this.height;
+            var sideBySide = (origHeight < 150 || origWidth < 350);
+            if(sideBySide) {
+                modal = $('#uploadCompareSideBySide');
+                modal.addClass('in sp-shade');
+                $(".modal-dialog", modal).css("width", origWidth + 200);
+                $('.modal-content').css("height", origHeight + 150);
+                // $(".shortpixel-slider", modal).css("width", origWidth +200).css("height", origHeight + 200);
+                modal.show();
+                $('.side-by-side .uploadCompareOriginal').attr("src", view.data('original'));
+                $('.side-by-side .uploadCompareOptimized').attr("src", view.data('optimized'));
+            } else {
+                modal.show();
+                $('#compareSlider').twentytwenty({
+                    slider_move: "mousemove"
+                });
+                $('#modal-loading').hide();
+                $('.modal-dialog').css('width', $('.uploadCompareOptimized').width());
+                $('.modal-body').css('height', $('.uploadCompareOptimized').height());
+            }
+        });
+        setTimeout(function(){
+            $(window).trigger('resize');
+        }, 1000);
+    }
 
 })(jQuery);
 
