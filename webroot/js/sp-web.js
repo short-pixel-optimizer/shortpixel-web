@@ -123,13 +123,9 @@
             //folderEvent: 'dblclick',
             multiFolder: false
             //onlyFolders: true
-        });
-        
-        // folder optimized compare slider 
-        $(".sp-folder-tree-results .optimized-view").click(function(e) {
-            // e.preventDefault();
+        }, function(file) {
             var modal = $('#uploadCompare');
-            var view = $(this);
+            var view = $(`a[rel='${file}'`).siblings('.sp-file-status').children('.optimized-view');
 
             $("#compareSlider").html('<img class="uploadCompareOriginal"/><img class="uploadCompareOptimized"/>');
             var imgOpt = $(".uploadCompareOptimized", modal);
@@ -168,6 +164,7 @@
             setTimeout(function(){
                 $(window).trigger('resize');
             }, 1000);
+        }, function(dir){
         });
         $('#uploadCompareSideBySide').on('click', function(e) {
            if(e.target == this) {
