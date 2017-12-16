@@ -139,8 +139,10 @@
         $(".sp-folder-tree-results .optimized-view").click(function(e) {
             e.preventDefault();
             var url = $(this).attr('data-optimized');
+            console.log('I clicked the eye');
             var file = url.substring(url.indexOf(window.location.host) + window.location.host.length);
-            showModal(file);
+            $(`a[rel='${file}'`).trigger('click');
+
         });
         $('#uploadCompareSideBySide').on('click', function(e) {
            if(e.target == this) {
@@ -169,7 +171,9 @@
     
     function showModal(file) {
         var modal = $('#uploadCompare');
-        var view = $(`a[rel='${file}'`).siblings('.sp-file-status').children('.optimized-view');
+        // var view = $(`a[rel='${file}'`).siblings('.sp-file-status').children('.optimized-view');
+        var view = $(this);
+        console.log(file);
 
         $("#compareSlider").html('<img class="uploadCompareOriginal"/><img class="uploadCompareOptimized"/>');
         var imgOpt = $(".uploadCompareOptimized", modal);
