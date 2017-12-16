@@ -141,7 +141,8 @@
             var url = $(this).attr('data-optimized');
             console.log('I clicked the eye');
             var file = url.substring(url.indexOf(window.location.host) + window.location.host.length);
-            $(`a[rel='${file}'`).trigger('click');
+            showModal(file);
+            // $(`a[rel='${file}'`).trigger('click');
 
         });
         $('#uploadCompareSideBySide').on('click', function(e) {
@@ -171,8 +172,8 @@
     
     function showModal(file) {
         var modal = $('#uploadCompare');
-        // var view = $(`a[rel='${file}'`).siblings('.sp-file-status').children('.optimized-view');
-        var view = $(this);
+        var view = $(`a[rel='${file}'`).siblings('.sp-file-status').children('.optimized-view');
+        // var view = $(this);
         console.log(file);
 
         $("#compareSlider").html('<img class="uploadCompareOriginal"/><img class="uploadCompareOptimized"/>');
