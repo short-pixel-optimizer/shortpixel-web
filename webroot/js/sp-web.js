@@ -132,15 +132,16 @@
         });
         
         // folder optimized compare slider 
-        $(".sp-folder-tree-results .optimized-view").click(function(e) {
+        $(document).on('click', '.optimized-view', function(e) { 
             e.preventDefault();
             var url = $(this).attr('data-optimized');
             console.log('I clicked the eye');
             var file = url.substring(url.indexOf(window.location.host) + window.location.host.length);
             showModal(file+'/');
-            // $(`a[rel='${file}'`).trigger('click');
+         });
+        
 
-        });
+
         $('#uploadCompareSideBySide').on('click', function(e) {
            if(e.target == this) {
             $('#uploadCompareSideBySide').hide().removeClass('in sp-shade');
