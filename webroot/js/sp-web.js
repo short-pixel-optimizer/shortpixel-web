@@ -124,15 +124,11 @@
             multiFolder: false
             //onlyFolders: true
         }, function(file) {
-            // do something when a file is clicked
-            console.log("I clicked a file!");
-            if(file != undefined)
-                showModal(file);
-            
-
+            // console.log("I clicked a file!");
+            // if(file != undefined)
+                // showModal(file);
         }, function(dir){
-            console.log("I clicked a folder!");
-            // do something when a dir is clicked
+            // console.log("I clicked a folder!");
         });
         
         // folder optimized compare slider 
