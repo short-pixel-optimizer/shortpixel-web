@@ -141,7 +141,7 @@
             var url = $(this).attr('data-optimized');
             console.log('I clicked the eye');
             var file = url.substring(url.indexOf(window.location.host) + window.location.host.length);
-            showModal(file);
+            showModal(file+'/');
             // $(`a[rel='${file}'`).trigger('click');
 
         });
