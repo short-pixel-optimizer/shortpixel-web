@@ -190,16 +190,15 @@
 
             var sideBySide = (origHeight < 150 || origWidth < 350);
             if(sideBySide) {
-                var maxModalWidth = Math.max(800,Math.round(0.8 * Math.max(document.documentElement.clientWidth, window.innerWidth || 0)));
-                var width = Math.max(350, Math.min(maxModalWidth, (origWidth < 350 ? (origWidth + 25) * 2 : (origHeight < 150 ? origWidth + 25 : origWidth))));
+                var width = Math.max(350, Math.min(maxModalWidth, (width < 350 ? (width + 25) * 2 : (height < 150 ? width + 25 : width))));
                 var height = Math.max(150, (origWidth > 350 ? 2 * (origHeight + 45) : origHeight + 45));
 
                 modal = $('#uploadCompareSideBySide');
                 modal.addClass('in sp-shade');
                 // $(".modal-dialog", modal).css("width", width + 200);
                 // $('.modal-content').css("height", height + 150);
-                $(".modal-dialog", modal).css("width", width).css("max-width", origWidth);
-                $(".shortpixel-slider", modal).css("width", width).css("max-width", origWidth);
+                $(".modal-dialog", modal).css("width", width);
+                $(".shortpixel-slider", modal).css("width", width);
                 $(".modal-body", modal).css("height", height);
                 modal.show();
                 $('.side-by-side .uploadCompareOriginal').attr("src", view.data('original'));
