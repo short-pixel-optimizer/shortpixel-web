@@ -190,7 +190,7 @@
 
             var sideBySide = (origHeight < 150 || origWidth < 350);
             if(sideBySide) {
-                var width = Math.max(350, Math.min(maxModalWidth, (width < 350 ? (width + 25) * 2 : (height < 150 ? width + 25 : width))));
+                var width = Math.max(350, Math.min(800, (origWidth < 350 ? (origWidth + 25) * 2 : (origHeight < 150 ? origWidth + 25 : origWidth))));
                 var height = Math.max(150, (origWidth > 350 ? 2 * (origHeight + 45) : origHeight + 45));
 
                 modal = $('#uploadCompareSideBySide');
