@@ -204,7 +204,7 @@
                 $('.side-by-side .uploadCompareOriginal').attr("src", view.data('original'));
                 $('.side-by-side .uploadCompareOptimized').attr("src", view.data('optimized'));
             } else {
-                var width = Math.max(350, Math.min(800, (origWdth < 350 ? (origWidth + 25) * 2 : (origHeight < 150 ? origWidth + 25 : origWidth))));
+                var width = Math.max(350, Math.min(800, (origWidth < 350 ? (origWidth + 25) * 2 : (origHeight < 150 ? origWidth + 25 : origWidth))));
                 var height = origHeight * width / origWidth;
                 $(".modal-dialog", modal).css("width", width);
                 $(".shortpixel-slider", modal).css("width", width);
