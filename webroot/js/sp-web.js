@@ -187,24 +187,36 @@
             $(window).trigger('resize');
             var origWidth = this.width;
             var origHeight = this.height;
+
             var sideBySide = (origHeight < 150 || origWidth < 350);
             if(sideBySide) {
+                var width = Math.max(350, Math.min(800, (origWidth < 350 ? (origWidth + 25) * 2 : (origHeight < 150 ? origWidth + 25 : origWidth))));
+                var height = Math.max(150, (origWidth > 350 ? 2 * (height + 45) : height + 45));
+
                 modal = $('#uploadCompareSideBySide');
                 modal.addClass('in sp-shade');
-                $(".modal-dialog", modal).css("width", origWidth + 200);
-                $('.modal-content').css("height", origHeight + 150);
-                // $(".shortpixel-slider", modal).css("width", origWidth +200).css("height", origHeight + 200);
+                // $(".modal-dialog", modal).css("width", width + 200);
+                // $('.modal-content').css("height", height + 150);
+                $(".modal-dialog", modal).css("width", width);
+                $(".shortpixel-slider", modal).css("width", width);
+                $(".modal-body", modal).css("height", height);
                 modal.show();
                 $('.side-by-side .uploadCompareOriginal').attr("src", view.data('original'));
                 $('.side-by-side .uploadCompareOptimized').attr("src", view.data('optimized'));
             } else {
+                var width = Math.max(350, Math.min(800, (origWdth < 350 ? (origWidth + 25) * 2 : (origHeight < 150 ? origWidth + 25 : origWidth))));
+                var height = origHeight * width / origWidth;
+                $(".modal-dialog", modal).css("width", width);
+                $(".shortpixel-slider", modal).css("width", width);
+                $(".modal-body", modal).css("height", height);
                 modal.show();
                 $('#compareSlider').twentytwenty({
                     slider_move: "mousemove"
                 });
                 $('#modal-loading').hide();
-                $('.modal-dialog').css('width', $('.uploadCompareOptimized').width());
-                $('.modal-body').css('height', $('.uploadCompareOptimized').height());
+                // $('.modal-dialog').css('width', $('.uploadCompareOptimized').width());
+                // $('.modal-body').css('height', $('.uploadCompareOptimized').height());
+
             }
         });
         setTimeout(function(){
