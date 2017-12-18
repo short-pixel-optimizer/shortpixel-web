@@ -123,11 +123,107 @@
             //folderEvent: 'dblclick',
             multiFolder: false
             //onlyFolders: true
+        }, function(file) {
+            // console.log("I clicked a file!");
+            // if(file != undefined)
+                // showModal(file);
+        }, function(dir){
+            // console.log("I clicked a folder!");
         });
+        
+        // folder optimized compare slider 
+        $(document).on('click', '.optimized-view', function(e) { 
+            e.preventDefault();
+            var url = $(this).attr('data-optimized');
+            console.log('I clicked the eye');
+            var file = url.substring(url.indexOf(window.location.host) + window.location.host.length);
+            showModal(file+'/');
+         });
+        
 
+
+        $('#uploadCompareSideBySide').on('click', function(e) {
+           if(e.target == this) {
+            $('#uploadCompareSideBySide').hide().removeClass('in sp-shade');
+            $('#modal-loading').show();
+           }
+        });
+        $('#uploadCompare').on('click', function(e) {
+           if(e.target == this) {
+            $('#uploadCompare').hide();
+            $("#compareSlider").unwrap();
+            $("#compareSlider").html('');
+            $('#modal-loading').show();
+           }
+        });
+        $('.modal-content .close').on('click', function(e) {
+            $('#uploadCompare').hide();
+            $('#uploadCompareSideBySide').hide().removeClass('in');
+            $("#compareSlider").unwrap();
+            $("#compareSlider").html('');
+            $('#modal-loading').show();
+        });
         ShortPixel.enableResize("#resize");
         $("#resize").change(function(){ ShortPixel.enableResize(this); });
     });
+    
+    function showModal(file) {
+        var modal = $('#uploadCompare');
+        var view = $(`a[rel='${file}'`).siblings('.sp-file-status').children('.optimized-view');
+        // var view = $(this);
+        console.log(file);
+
+        $("#compareSlider").html('<img class="uploadCompareOriginal"/><img class="uploadCompareOptimized"/>');
+        var imgOpt = $(".uploadCompareOptimized", modal);
+        var imgOrig = $(".uploadCompareOriginal", modal);
+        
+        imgOrig.attr("src", view.data('original'));
+        imgOpt.attr("src", view.data('optimized'));
+        
+        imgOrig.on('load', function() {
+            $(window).trigger('resize');
+        });
+        imgOpt.on('load', function() {
+            $(window).trigger('resize');
+            var origWidth = this.width;
+            var origHeight = this.height;
+
+            var sideBySide = (origHeight < 150 || origWidth < 350);
+            if(sideBySide) {
+                var width = Math.max(350, Math.min(800, (origWidth < 350 ? (origWidth + 25) * 2 : (origHeight < 150 ? origWidth + 25 : origWidth))));
+                var height = Math.max(150, (origWidth > 350 ? 2 * (origHeight + 45) : origHeight + 45));
+
+                modal = $('#uploadCompareSideBySide');
+                modal.addClass('in sp-shade');
+                // $(".modal-dialog", modal).css("width", width + 200);
+                // $('.modal-content').css("height", height + 150);
+                $(".modal-dialog", modal).css("width", width);
+                $(".shortpixel-slider", modal).css("width", width);
+                $(".modal-body", modal).css("height", height);
+                modal.show();
+                $('.side-by-side .uploadCompareOriginal').attr("src", view.data('original'));
+                $('.side-by-side .uploadCompareOptimized').attr("src", view.data('optimized'));
+            } else {
+                var maxModalWidth = Math.max(800,Math.round(0.8 * Math.max(document.documentElement.clientWidth, window.innerWidth || 0)));
+                var width = Math.max(350, Math.min(maxModalWidth, (origWidth < 350 ? (origWidth + 25) * 2 : (origHeight < 150 ? origWidth + 25 : origWidth))));
+                var height = origHeight * width / origWidth;
+                $(".modal-dialog", modal).css("width", width).css("max-width", origWidth);
+                $(".shortpixel-slider", modal).css("width", width).css("max-width", origWidth);
+                $(".modal-body", modal).css("height", height);
+                modal.show();
+                $('#compareSlider').twentytwenty({
+                    slider_move: "mousemove"
+                });
+                $('#modal-loading').hide();
+                // $('.modal-dialog').css('width', $('.uploadCompareOptimized').width());
+                // $('.modal-body').css('height', $('.uploadCompareOptimized').height());
+
+            }
+        });
+        setTimeout(function(){
+            $(window).trigger('resize');
+        }, 1000);
+    }
 
 })(jQuery);
 
