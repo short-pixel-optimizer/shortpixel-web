@@ -180,7 +180,7 @@ class ShortPixelWeb
                                             echo "Optimized by " . $info->percent . "% (" . $info->compressionType . ")";
                                             $backupPath = $backupFolder . '/' . $file;
 
-                                            if($backupFolder && $backupUrl && file_exists($backupPath)) {
+                                            if($backupFolder && $backupUrl && file_exists($backupPath) && !str_pos($file, ".pdf")) {
                                                 preg_match_all('#/#', $backupDir,$matches, PREG_OFFSET_CAPTURE);  
                                                 if(!empty($matches[0])) { //if a subfolder
                                                     $start = $matches[0][0][1];
