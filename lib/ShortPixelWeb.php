@@ -107,6 +107,7 @@ class ShortPixelWeb
                     }
                     return  array (
                         "backupPath" => $absolute,
+                        "backupDir" => $relative,
                         "backupUrl" => $url
                     );
                 }
@@ -131,7 +132,7 @@ class ShortPixelWeb
                 $this->setupWrapper(false);
 
                 $bkFld = $this->searchBackupFolder($postDir);
-                $backupFolder = $bkFld['backupPath']; $backupUrl = $bkFld['backupUrl'];
+                $backupFolder = $bkFld['backupPath']; $backupUrl = $bkFld['backupUrl']; $backupDir = $bkFld["backupDir"];
                 $filesStatus = \ShortPixel\folderInfo($postDir, false, true);
                 //die(var_dump($filesStatus));
             }
@@ -144,9 +145,9 @@ class ShortPixelWeb
 
                     if(in_array($file, array('ShortPixelBackups', '.sp-options', '.shortpixel', '.sp-lock'))) continue;
 
-                    $htmlRel	= $this->normalizePath(htmlentities($folder . '/' . $file));
-                    $htmlName	= htmlentities($file);
-                    $ext		= preg_replace('/^.*\./', '', $file);
+                    $htmlRel    = $this->normalizePath(htmlentities($folder . '/' . $file));
+                    $htmlName   = htmlentities($file);
+                    $ext        = preg_replace('/^.*\./', '', $file);
 
                     if( file_exists($postDir . $file) && $file != '.' && $file != '..' ) {
                         if( is_dir($postDir . $file) && (!$onlyFiles || $onlyFolders) ) {
@@ -165,8 +166,21 @@ class ShortPixelWeb
                                         if($info->percent > 0) {
                                             echo "Optimized by " . $info->percent . "% (" . $info->compressionType . ")";
                                             $backupPath = $backupFolder . '/' . $file;
-                                            if($backupFolder && $backupUrl && file_exists($backupPath)) {
-                                                $originalUrl = $backupUrl . '/' . $file; $optimizedUrl = $backupUrl . '/' . $file;
+
+                                            if($backupFolder && $backupUrl && file_exists($backupPath) && !strpos($file, ".pdf")) {
+                                                preg_match_all('#/#', $backupDir,$matches, PREG_OFFSET_CAPTURE);  
+                                                if(!empty($matches[0])) { //if a subfolder
+                                                    $start = $matches[0][0][1];
+                                                    $end = $matches[0][1][1];
+                                                    $backupSlug = substr($backupDir,$start, $end-$start);                                                
+                                                    $subFolder = substr($backupDir,$end, strlen($backupDir));
+                                                    $originalUrl =  $backupUrl . '/' . $file;
+                                                    $optimizedUrl = str_replace($backupSlug,'',$backupUrl) . '/'. $file;
+                                                } else {
+                                                    $optimizedUrl = substr($backupUrl,0,strrpos($backupUrl,"/")) . '/' . $file;
+                                                    $originalUrl = $backupUrl .'/' . $file;
+                                                }
+
                                                 echo "<a class='optimized-view' href='#' data-original='" . $originalUrl . "' data-optimized='" . $optimizedUrl . "' title='Compare images for " . $file . " (original vs. lossy)' style='display: inline;'>";
                                                 echo "<span class='dashicons sp-eye-open' style='cursor:pointer;font-size:1.2em'></span>";
                                                 echo "</a>";
