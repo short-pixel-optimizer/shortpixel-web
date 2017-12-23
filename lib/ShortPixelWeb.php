@@ -6,7 +6,7 @@
  */
 namespace ShortPixelWeb;
 
-const WEB_VERSION = "1.0.2";
+const WEB_VERSION = "1.1.0";
 
 
 use ShortPixelWeb\XTemplate;
@@ -60,19 +60,6 @@ class ShortPixelWeb
         else {
             $this->renderStartPage(array());
         }
-    }
-
-    function pathToRelative($path, $reference) {
-        $pa = explode('/', trim($path, '/'));
-        $ra = explode('/', trim($reference, '/'));
-        $res = array();
-        for($i = 0, $same = true; $i < max(count($pa), count($ra)); $i++) {
-            if($same && isset($pa[$i]) && isset($ra[$i]) && $pa[$i] == $ra[$i]) continue;
-            $same = false;
-            if(isset($ra[$i])) array_unshift($res, '..');
-            if(isset($pa[$i])) $res[] = $pa[$i];
-        }
-        return implode('/', $res);
     }
 
     private function folderFullPath($folder) {
@@ -190,6 +177,9 @@ class ShortPixelWeb
                                         break;
                                     case 'pending':
                                         echo "Pending";
+                                        break;
+                                    case 'skip':
+                                        echo "<span title='" . $info->message . "'>Skipped</span>";
                                         break;
                                 }
                                 echo "</div>";
