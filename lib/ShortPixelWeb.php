@@ -2,11 +2,9 @@
 /**
  * User: simon
  * Date: 10.12.2016
- * Time: 00:33
+ * Version: see the const VERSION below
  */
 namespace ShortPixelWeb;
-
-const WEB_VERSION = "1.1.0";
 
 
 use ShortPixelWeb\XTemplate;
@@ -15,6 +13,8 @@ require_once("../vendor/autoload.php");
 
 class ShortPixelWeb
 {
+    const VERSION = "1.2.0";
+
     private $settingsHandler;
     private $xtpl;
     private $basePath;
@@ -51,7 +51,7 @@ class ShortPixelWeb
                     $this->renderFolderOptionsData($_POST['folder']);
                     break;
                 case 'shortpixel_optimize' :
-                    $this->optimizeAction($_POST['folder'], isset($_POST['slice']) ? $_POST['slice'] : 0);
+                    $this->optimizeAction($_POST['folder'], $_POST['unique_id'], isset($_POST['slice']) ? $_POST['slice'] : 0);
             }
         }
         elseif(isset($_GET['folder'])) {
@@ -211,6 +211,7 @@ class ShortPixelWeb
     function renderSettings($type) {
         $this->xtpl->assign('options_type', $type);
         $this->setupWrapper(false);
+        $this->xtpl->assign('unique_id', uniqid("WEB"));
         $this->xtpl->assign('lossy_checked', \ShortPixel\ShortPixel::opt('lossy') == 1 ? 'checked' : '');
         $this->xtpl->assign('glossy_checked', \ShortPixel\ShortPixel::opt('lossy') == 2 ? 'checked' : '');
         $this->xtpl->assign('lossless_checked', \ShortPixel\ShortPixel::opt('lossy') == 0 ? 'checked' : '');
@@ -224,7 +225,7 @@ class ShortPixelWeb
         $this->xtpl->assign('resize_inner_checked', \ShortPixel\ShortPixel::opt('resize') & 2 ? 'checked' : '');
     }
 
-    function initJSConstants() {
+    function initJSConstants($optData = array()) {
         $username = '[WEB SERVER USER]';
         if(function_exists('posix_geteuid')) {
             $pwu_data = posix_getpwuid(posix_geteuid());
@@ -232,7 +233,9 @@ class ShortPixelWeb
         }
         $this->xtpl->assign("current_os_user", $username);
         $this->xtpl->assign("shortpixel_os_path", $this->basePath); // get that damn separator straight on Windows too :))
+        $this->xtpl->assign("shortpixel_own_subfolder", basename(dirname(__DIR__)));
         $this->xtpl->assign("shortpixel_api_key", $this->settingsHandler->get("API_KEY"));
+        $this->xtpl->assign("shortpixel_unique_id", isset($optData['unique_id']) ? $optData['unique_id'] : '');
     }
 
 
@@ -263,7 +266,7 @@ class ShortPixelWeb
             $this->renderStartPage(array('error' => "Please select a folder."));
             return;
         }
-        $this->initJSConstants();
+        $this->initJSConstants($optData);
         if(isset($optData['type'])) {
             //the action is from the Optimize now button and it has the settings, persist them in the .sp-options file
             if(isset($optData['backup_path'])) {
@@ -286,11 +289,13 @@ class ShortPixelWeb
            && (   $status->total == $status->succeeded + $status->failed
                || isset($status->todo) && count($status->todo->files) == 0 && count($status->todo->filesPending) == 0)) {
             //success
+            $this->xtpl->assign('total_percent', number_format(100.0 - 100.0 * $status->totalOptimizedSize / $status->totalSize, 2));
             $this->xtpl->assign('total_files', $status->total);
             $this->xtpl->assign('succeeded_files', $status->succeeded);
             $this->xtpl->assign('failed_files', $status->failed);
             $this->xtpl->parse('main.glyphicons');
             $this->xtpl->parse('main.success');
+            $this->xtpl->parse('main.success_js');
             $this->xtpl->parse('main.comparer');
         } else {
             if($status->status == 'error') {
@@ -311,12 +316,12 @@ class ShortPixelWeb
     }
 
     function renderMain() {
-        $this->xtpl->assign('web_version', WEB_VERSION . ' (SDK ' . \ShortPixel\ShortPixel::VERSION . ')');
+        $this->xtpl->assign('web_version', self::VERSION . ' (SDK ' . \ShortPixel\ShortPixel::VERSION . ')');
         $this->xtpl->parse('main');
         $this->xtpl->out('main');
     }
 
-    function optimizeAction($folder, $slice) {
+    function optimizeAction($folder, $uniqueId, $slice) {
         $timeLimit = ini_get('max_execution_time');
         if($timeLimit) {
             $timeLimit -= 5;
@@ -325,6 +330,32 @@ class ShortPixelWeb
         }
 
         $folderPath = $this->basePath . $folder; // get that damn separator straight on Windows too :))
+
+        try {
+            $splock = new \ShortPixel\Lock($uniqueId, $folderPath, false, "CLI");
+            $splock->lock();
+        }
+        catch(\Exception $e)
+        {
+            if($e->getCode() == -19) {
+                //already locked by another script, try to get progress from notifier
+                $notifier = \ShortPixel\notify\ProgressNotifier::constructNotifier($folderPath);
+                $data = $notifier->getData();
+                if($data && isset($data->succeededList)) { // there is progress info send it.
+                    die(json_encode(array(
+                        'status' => array('code' => 1, 'message' => 'pending'),
+                        'source' => 'notifier',
+                        'succeeded' => $data->succeededList,
+                        'pending' => array(),
+                        'failed' => array(),
+                        'same' => $data->sameList
+                    )));
+                }
+            }
+            die(json_encode(array("status" => array("code" => $e->getCode(), "message" => "The folder is locked by a different ShortPixel process but no progress info is yet recorded."))));
+        }
+
+        //we're on our own.
         $this->setupWrapper($folderPath);
         $slice = $slice ? $slice : \ShortPixel\ShortPixel::MAX_ALLOWED_FILES_PER_CALL;
 

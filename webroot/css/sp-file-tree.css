@@ -68,6 +68,12 @@ UL div.sp-file-status {
     color: #286b7d;
     font-size: 2.5em;
 }
+.sp-thumbs-up:before {
+    font: 400 17px/1 dashicons;
+    content: "\f529";
+    color: #286b7d;
+    font-size: 2.5em;
+}
 
 UL.jqueryFileTree LI.directory.selected {
     background-color: #209fd2;

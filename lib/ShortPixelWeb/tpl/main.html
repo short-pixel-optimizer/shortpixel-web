@@ -55,13 +55,20 @@
     <script>
         ShortPixel.CURRENT_OS_USER = '{current_os_user}';
         ShortPixel.OS_PATH = '{shortpixel_os_path}';
+        ShortPixel.OWN_SUBFOLDER = '{shortpixel_own_subfolder}';
         ShortPixel.API_KEY = '{shortpixel_api_key}';
+        ShortPixel.UNIQUE_ID = '{shortpixel_unique_id}'
     </script>
     <!-- BEGIN: optimize_js -->
     <script>
         ShortPixel.optimize('{folder}');
     </script>
     <!-- END: optimize_js -->
+    <!-- BEGIN: success_js -->
+    <script>
+        ShortPixel.percentDial("#total-optimization-percent", 120);
+    </script>
+    <!-- END: success_js -->
     </body>
 </html>
 <!-- END: main -->

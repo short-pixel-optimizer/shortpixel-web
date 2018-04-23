@@ -87,10 +87,9 @@
         $("#backup-folder-picker .sp-popup input.select-folder").click(function(){
             var subPath = $("#backup-folder-picker UL.jqueryFileTree LI.directory.selected A").attr("rel");
             if(subPath) {
-                var fullPath = subPath;
-                if(fullPath.slice(-1) == '/') fullPath = fullPath.slice(0, -1);
+                var fullPath = ShortPixel.utsi(subPath);
                 var origPath = $("#folder").val();
-                if(fullPath.indexOf(origPath) !== -1) {
+                if(fullPath.indexOf(ShortPixel.tsi(origPath)) !== -1) {
                     // am putea adauga daca exista un subpath: (dar ne mai gandim)
                     //var subPath = fullPath.substr(fullPath.indexOf(origPath) + origPath.length + 1)
                     //subPath = subPath.length ? subPath + "/" : "";
@@ -292,7 +291,7 @@ var ShortPixel = function() {
         $(query).html($(query).html()
             + '<p class="code-advice">You can also optimize this folder by configuring a job in the crontab like this:<br>' +
             "<code>0,15,30,45 * * * * runuser -l " + ShortPixel.CURRENT_OS_USER + " -s /bin/sh -c 'php " +
-            ShortPixel.OS_PATH + "/shortpixel-web/vendor/shortpixel/shortpixel-php/lib/cmdShortpixelOptimize.php --apiKey=" + ShortPixel.API_KEY +
+            ShortPixel.OS_PATH + "/" + ShortPixel.OWN_SUBFOLDER + "/vendor/shortpixel/shortpixel-php/lib/cmdShortpixelOptimize.php --apiKey=" + ShortPixel.API_KEY +
             " --folder=" + ShortPixel.OS_PATH + fullPath + "'</code></p>");
     }
 
@@ -302,6 +301,7 @@ var ShortPixel = function() {
             url: window.location.href.split("?")[0],
             data: {
                 action: 'shortpixel_optimize',
+                unique_id: ShortPixel.UNIQUE_ID,
                 folder: folder,
                 slice: slice
             },
@@ -329,9 +329,7 @@ var ShortPixel = function() {
                     window.location.reload();
                 }
                 else if(data.status.code == 1) {
-                    $("#doneFiles").val(parseInt($("#doneFiles").val()) + data.succeeded.length + data.failed.length + data.same.length)
-                    var percent = Math.min(100.0, 100.0 * (parseInt($("#doneFiles").val())) / (parseInt($("#totalFiles").val())));
-                    progressUpdate(percent.toFixed(1), "");
+                    $("#error-message").html('');
                     if(   data.succeeded.length + data.pending.length + data.same.length + data.failed.length == 0) {
                         if(ShortPixel.emptyConsecutiveResponses > 3 || percent == 100.0) {
                             if(ShortPixel.sliderConsumerId !== false) {
@@ -346,28 +344,43 @@ var ShortPixel = function() {
                     } else {
                         ShortPixel.emptyConsecutiveResponses = 0;
                     }
-                    if(ShortPixel.sliderQueue.getLength() < 100) {
-                        for(var i = 0; i < data.succeeded.length; i++) {
-                            var item = data.succeeded[i];
-                            //preload the images
-                            if(item.OriginalURL.split('.').pop().toLowerCase() !== 'pdf') {
-                                item.imageOrig = new Image();
-                                item.imageOpt = new Image();
-                                item.imageOrig.src = item.OriginalURL;
-                                item.imageOpt.src = item.LossyURL;
-                            }
-                            ShortPixel.sliderQueue.enqueue(item);
+                    var succeededAndSame = data.succeeded.concat(data.same);
+                    for(var succeeded = 0, i = 0; i < succeededAndSame.length; i++) {
+                        var item = succeededAndSame[i];
+                        if(ShortPixel.sliderHistory.find(item.OriginalURL) >=0 ) {
+                            continue; //already displayed.
                         }
+                        //preload the images
+                        succeeded++;
+                        if(item.OriginalURL.split('.').pop().toLowerCase() !== 'pdf') {
+                            item.imageOrig = new Image();
+                            item.imageOpt = new Image();
+                            item.imageOrig.src = item.OriginalURL;
+                            item.imageOpt.src = item.LossyURL;
+                        }
+                        ShortPixel.sliderQueue.enqueue(item);
+                        //add the item to history, in order not to display it again
+                        ShortPixel.sliderHistory.enqueue(item.OriginalURL);
                     }
+                    for(var failed = 0, i = 0; i < data.failed.length; i++) {
+                        //add the item to history, in order not to display it again
+                        ShortPixel.sliderHistory.enqueue(item.OriginalURL);
+                    }
+                    $("#doneFiles").val(parseInt($("#doneFiles").val()) + succeeded + data.failed.length + data.same.length)
+                    var percent = Math.min(100.0, 100.0 * (parseInt($("#doneFiles").val())) / (parseInt($("#totalFiles").val())));
+                    progressUpdate(percent.toFixed(1), "");
+
                     if(ShortPixel.sliderConsumerId === false) {
-                        sliderUpdate();
+                        //sliderUpdate(); - better not call it directly here because the first image will not be .complete().
                         ShortPixel.sliderConsumerId = setInterval(sliderUpdate, ShortPixel.sliderFrequencyMs);
                     }
 
                     ShortPixel.addCronSuggestion(".progress-code-advice-empty", folder, false);
                     $(".progress-code-advice").removeClass("progress-code-advice-empty");
+                    $(".progress-code-advice").parent().css('min-height','' + Math.max(600, window.innerHeight - $(".progress-code-advice").parent().offset().top - 100) + 'px');
 
-                    setTimeout(function(){optimize(folder, spSlice);}, 1000);
+                    var timeout = (typeof data.source !== 'undefined') ? 10000 : 1000;
+                    setTimeout(function(){optimize(folder, spSlice);}, timeout);
                 }
                 else if(data.status.code == 0)
                 {
@@ -382,7 +395,7 @@ var ShortPixel = function() {
                     console.log("got error " + t + ", retrying in 10 sec...");
                 }
                 if(errCount > 4) {
-                    //halve the number of files sent after errCount gets over 3 (
+                    //halve the number of files sent after errCount gets over 3
                     errCount = 0;
                     spSlice = Math.max(1, Math.round(spSlice/2));
                 } else {
@@ -412,6 +425,9 @@ var ShortPixel = function() {
     function sliderUpdate(){
         var id = ShortPixel.counter++
         var item = ShortPixel.sliderQueue.dequeue();
+        if(typeof item === 'undefined') return; //empty queue
+        if(typeof item.imageOpt !== 'undefined' && !item.imageOpt.complete) return; //the image is not yet downloaded or not present anymore
+
         if(typeof item === 'undefined') { //empty queue - make slider slower
             ShortPixel.sliderFrequencyMs += 500;
             return;
@@ -445,13 +461,16 @@ var ShortPixel = function() {
         var newSlide = oldSlide.clone();
         newSlide.attr("id", "slide-" + id);
         $(".bulk-img-opt", newSlide).attr("src", thumb);
-        if(bkThumb.length > 0) {
+        if(bkThumb.length > 0 && percent > 0) {
             $(".img-original", newSlide).css("display", "inline-block");
             $(".bulk-img-orig", newSlide).attr("src", bkThumb);
         } else {
             $(".img-original", newSlide).css("display", "none");
         }
         $(".bulk-opt-percent", newSlide).html('<input type="text" class="dial" value="' + percent + '"/>');
+
+        $(".img-info-optimized", newSlide).css("display", (percent > 0 ? "inline-block" : "none"));
+        $(".img-info-same", newSlide).css("display", (percent > 0 ? "none" : "inline-block"));
 
         //debugger;
         $(".bulk-slider").append(newSlide);
@@ -494,10 +513,20 @@ var ShortPixel = function() {
         }
     }
 
+    function trailingslashit(path) {
+        return path + (path.endsWith('/') ? '' : '/')
+    }
+
+    function untrailingslashit(path) {
+        if(path.slice(-1) == '/') path = path.slice(0, -1);
+        return path;
+    }
+
     return {
         //status
         counter : 0,
-        sliderQueue : new Queue(),
+        sliderQueue : new Queue(100),
+        sliderHistory: new Queue(300),
         sliderConsumerId : false,
         sliderFrequencyMs : 3000,
         emptyConsecutiveResponses : 0,
@@ -512,7 +541,9 @@ var ShortPixel = function() {
         sliderUpdate : sliderUpdate,
         hideSlider : hideSlider,
         percentDial : percentDial,
-        enableResize : enableResize
+        enableResize : enableResize,
+        tsi: trailingslashit,
+        utsi: untrailingslashit
     }
 }();
 
@@ -529,11 +560,12 @@ var ShortPixel = function() {
 /* Creates a new queue. A queue is a first-in-first-out (FIFO) data structure -
  * items are added to the end of the queue and removed from the front.
  */
-function Queue(){
+function Queue(maxLen){
 
     // initialise the queue and offset
     var queue  = [];
     var offset = 0;
+    var maxLength = (typeof maxLen !== 'undefined' ? maxLen : 100000);
 
     // Returns the length of the queue.
     this.getLength = function(){
@@ -551,6 +583,9 @@ function Queue(){
      */
     this.enqueue = function(item){
         queue.push(item);
+        if(queue.length > maxLength) {
+            this.dequeue(); //get rid of older images
+        }
     }
 
     /* Dequeues an item and returns it. If the queue is empty, the value
@@ -580,6 +615,15 @@ function Queue(){
      */
     this.peek = function(){
         return (queue.length > 0 ? queue[offset] : undefined);
+    }
+
+    this.find = function(item) {
+        for(var i = 0; i < queue.length; i++) {
+            if(item == queue[i]) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 }
