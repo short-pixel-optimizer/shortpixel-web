@@ -364,7 +364,7 @@ var ShortPixel = function() {
                     }
                     for(var failed = 0, i = 0; i < data.failed.length; i++) {
                         //add the item to history, in order not to display it again
-                        ShortPixel.sliderHistory.enqueue(item.OriginalURL);
+                        ShortPixel.sliderHistory.enqueue(data.failed[i].OriginalURL);
                     }
                     $("#doneFiles").val(parseInt($("#doneFiles").val()) + succeeded + data.failed.length + data.same.length)
                     var percent = Math.min(100.0, 100.0 * (parseInt($("#doneFiles").val())) / (parseInt($("#totalFiles").val())));
@@ -500,7 +500,7 @@ var ShortPixel = function() {
             'height': size,
             'fgColor': '#1CAECB',
             'format' : function (value) {
-                return value + '%';
+                return value.toFixed(1) + '%';
             }
         });
     }

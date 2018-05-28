@@ -13,7 +13,7 @@ require_once("../vendor/autoload.php");
 
 class ShortPixelWeb
 {
-    const VERSION = "1.2.0";
+    const VERSION = "1.2.1";
 
     private $settingsHandler;
     private $xtpl;
