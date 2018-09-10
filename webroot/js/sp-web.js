@@ -112,7 +112,7 @@
             var bk_path = $(evt.target).val().trim();
             //a non-relative path should end in /ShortPixelBackups
             if(bk_path.indexOf("..") !== 0 && bk_path.lastIndexOf("ShortPixelBackups") !== bk_path.length - 17) {
-                $("#backup_path").val(bk_path + "/ShortPixelBackups");
+                $("#backup_path").val(bk_path + (bk_path.length ? '/' : '') + "ShortPixelBackups");
             }
         });
 

@@ -7,13 +7,14 @@
 namespace ShortPixelWeb;
 
 
+use ShortPixel\persist\TextPersister;
 use ShortPixelWeb\XTemplate;
 
 require_once("../vendor/autoload.php");
 
 class ShortPixelWeb
 {
-    const VERSION = "1.3.0";
+    const VERSION = "1.3.1";
 
     private $settingsHandler;
     private $xtpl;
@@ -143,13 +144,13 @@ class ShortPixelWeb
                 echo "<ul class='jqueryFileTree'>";
                 foreach( $files as $file ) {
 
-                    if(in_array($file, array('ShortPixelBackups', '.sp-options', '.shortpixel', '.sp-lock'))) continue;
+                    if(in_array($file, TextPersister::IGNORED_BY_DEFAULT())) continue;
 
                     $htmlRel    = $this->normalizePath(htmlentities($folder . '/' . $file));
                     $htmlName   = htmlentities($file);
                     $ext        = preg_replace('/^.*\./', '', $file);
 
-                    if( file_exists($postDir . $file) && $file != '.' && $file != '..' ) {
+                    if( file_exists($postDir . $file)) {
                         if( is_dir($postDir . $file) && (!$onlyFiles || $onlyFolders) ) {
                             if($extended) {
                                 //echo "<div class='sp-file-status'>25%</div>";
