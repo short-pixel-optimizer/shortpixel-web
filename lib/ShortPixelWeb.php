@@ -14,7 +14,7 @@ require_once("../vendor/autoload.php");
 
 class ShortPixelWeb
 {
-    const VERSION = "1.3.1";
+    const VERSION = "1.3.2";
 
     private $settingsHandler;
     private $xtpl;
@@ -123,6 +123,8 @@ class ShortPixelWeb
     }
 
     function renderBrowseFolderFragment($folder, $multiSelect, $onlyFolders, $onlyFiles, $extended = false) {
+        if(substr($folder, 0, 1) != '/') return; //a bug discovered by Dawid (epoczta.pl) makes the tree control send a request with the file count of the folder, instead of folder name. The specifics are that the folder
+
         $postDir = $this->folderFullPath($folder);
         $checkbox = $multiSelect ? "<input type='checkbox' />" : null;
 
@@ -370,7 +372,7 @@ class ShortPixelWeb
             } else {
                 $cmd = \ShortPixel\fromFolder($folderPath, $slice, $exclude);
             }
-            die(json_encode($cmd->wait($timeLimit)->toFiles($folderPath)));
+            die(json_encode($cmd->wait($timeLimit)->toFiles($folderPath), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         }
         catch(\Exception $e) {
             die(json_encode(array("status" => array("code" => $e->getCode(), "message" => $e->getMessage()))));

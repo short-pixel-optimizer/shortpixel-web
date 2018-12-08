@@ -443,7 +443,8 @@ var ShortPixel = function() {
 
         }
         var percent = item.PercentImprovement;
-        var filename = item.SavedFile.split('/').pop();
+        var filePath = (item.SavedFile ? item.SavedFile : item.SavedFileUTF8);
+        var filename = filePath.split('/').pop();
         var ext = filename.split('.').pop().toLowerCase();
         var thumb = (ext === 'pdf' ? "img/logo-pdf.png" : item.LossyURL);
         var bkThumb = (ext === 'pdf' ? "img/logo-pdf.png" : item.OriginalURL);
