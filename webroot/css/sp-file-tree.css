@@ -57,6 +57,8 @@ UL div.sp-file-status {
     display:flex;
     float:right;
     font-size: 0.8em;
+    z-index: 1;
+    position:relative;
 }
 .sp-eye-open:before {
     font: 400 17px/1 dashicons;

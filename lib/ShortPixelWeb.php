@@ -8,13 +8,15 @@ namespace ShortPixelWeb;
 
 
 use ShortPixel\persist\TextPersister;
+use ShortPixel\SPLog;
 use ShortPixelWeb\XTemplate;
 
 require_once("../vendor/autoload.php");
 
 class ShortPixelWeb
 {
-    const VERSION = "1.3.2";
+    const VERSION = "1.3.3";
+    const DEBUG_LOG = false;
 
     private $settingsHandler;
     private $xtpl;
@@ -332,6 +334,7 @@ class ShortPixelWeb
             $timeLimit = 60;
         }
 
+        $logger = SPLog::Init($uniqueId, self::DEBUG_LOG, SPLog::TARGET_CONSOLE, false, SPLog::FLAG_MEMORY);
         $folderPath = $this->basePath . $folder; // get that damn separator straight on Windows too :))
 
         try {
