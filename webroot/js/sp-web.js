@@ -49,7 +49,8 @@
                         $("#width").val(options.resize_width);
                         $("#height").val(options.resize_height);
                         $("#resize_type_" + (options.resize & 2 ? 'inner' : 'outer')).prop("checked", true);
-                        $("#webp").prop("checked", (options.convertto == '+webp' ? true : false));
+                        $("#webp").prop("checked", (options.convertto.indexOf('+webp') >=0 ? true : false));
+                        $("#avif").prop("checked", (options.convertto.indexOf('+avif') >=0 ? true : false));
                         $("#exclude").val(options.exclude);
                         $("#backup_path").val(options.backup_path);
                         $('<div class="specific-options-msg"><h3 class="success" id="info-message">Folder-specific options loaded, please check below.</h3>' +

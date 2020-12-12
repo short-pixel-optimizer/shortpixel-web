@@ -6,6 +6,9 @@
  */
 namespace ShortPixelWeb;
 
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 use ShortPixel\persist\TextPersister;
 use ShortPixel\SPLog;
@@ -15,7 +18,7 @@ require_once("../vendor/autoload.php");
 
 class ShortPixelWeb
 {
-    const VERSION = "1.3.3";
+    const VERSION = "1.4.0";
     const DEBUG_LOG = false;
 
     private $settingsHandler;
@@ -225,7 +228,8 @@ class ShortPixelWeb
         $this->xtpl->assign('resize_checked', \ShortPixel\ShortPixel::opt('resize') ? 'checked' : '');
         $this->xtpl->assign('width', \ShortPixel\ShortPixel::opt('resize_width'));
         $this->xtpl->assign('height', \ShortPixel\ShortPixel::opt('resize_height'));
-        $this->xtpl->assign('webp_checked', \ShortPixel\ShortPixel::opt('convertto') == '+webp' ? 'checked' : '');
+        $this->xtpl->assign('webp_checked', strpos(\ShortPixel\ShortPixel::opt('convertto'), '+webp') !== false ? 'checked' : '');
+        $this->xtpl->assign('avif_checked', strpos(\ShortPixel\ShortPixel::opt('convertto'), '+avif') !== false ? 'checked' : '');
         $this->xtpl->assign('resize_outer_checked', \ShortPixel\ShortPixel::opt('resize') & 2 ? '' : 'checked');
         $this->xtpl->assign('resize_inner_checked', \ShortPixel\ShortPixel::opt('resize') & 2 ? 'checked' : '');
     }
@@ -294,7 +298,7 @@ class ShortPixelWeb
            && (   $status->total == $status->succeeded + $status->failed
                || isset($status->todo) && count($status->todo->files) == 0 && count($status->todo->filesPending) == 0)) {
             //success
-            $this->xtpl->assign('total_percent', number_format(100.0 - 100.0 * $status->totalOptimizedSize / $status->totalSize, 2));
+            $this->xtpl->assign('total_percent', $status->totalSize ? number_format(100.0 * (1 - $status->totalOptimizedSize / $status->totalSize), 2) : 0);
             $this->xtpl->assign('total_files', $status->total);
             $this->xtpl->assign('succeeded_files', $status->succeeded);
             $this->xtpl->assign('failed_files', $status->failed);
