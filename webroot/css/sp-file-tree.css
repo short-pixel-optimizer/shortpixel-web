@@ -60,6 +60,12 @@ UL div.sp-file-status {
     z-index: 1;
     position:relative;
 }
+UL div.sp-file-status span.info-icon {
+    font-weight: bold;
+    font-size: 14px;
+    color: #ed2824;
+    cursor: default;
+}
 .sp-eye-open:before {
     font: 400 17px/1 dashicons;
     content: "\f177";

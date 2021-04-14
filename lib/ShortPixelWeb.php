@@ -18,8 +18,8 @@ require_once("../vendor/autoload.php");
 
 class ShortPixelWeb
 {
-    const VERSION = "1.4.0";
-    const DEBUG_LOG = false;
+    const VERSION = "1.4.1";
+    const LOG_PRODUCERS = SPLog::PRODUCER_NONE; //SPLog::PRODUCER_WEB | SPLog::PRODUCER_PERSISTER | SPLog::PRODUCER_CLIENT | SPLog::PRODUCER_RESULT | SPLog::PRODUCER_CTRL;
 
     private $settingsHandler;
     private $xtpl;
@@ -201,7 +201,7 @@ class ShortPixelWeb
                                         echo "Pending";
                                         break;
                                     case 'skip':
-                                        echo "<span title='" . $info->message . "'>Skipped</span>";
+                                        echo "<span title='" . $info->message . "'>Skipped <span class='info-icon'>ⓘ</span></span>";
                                         break;
                                 }
                                 echo "</div>";
@@ -338,8 +338,10 @@ class ShortPixelWeb
             $timeLimit = 60;
         }
 
-        $logger = SPLog::Init($uniqueId, self::DEBUG_LOG, SPLog::TARGET_CONSOLE, false, SPLog::FLAG_MEMORY);
         $folderPath = $this->basePath . $folder; // get that damn separator straight on Windows too :))
+        $logger = SPLog::Init($uniqueId, self::LOG_PRODUCERS, SPLog::TARGET_FILE, $folderPath . '/.shortpixel.log', SPLog::FLAG_MEMORY);
+
+        $logger->log(SPLog::PRODUCER_WEB, "Optimize AJAX request $uniqueId: FOLDER: $folderPath");
 
         try {
             $splock = new \ShortPixel\Lock($uniqueId, $folderPath, false, "CLI");
