@@ -599,27 +599,29 @@ class XTemplate {
 				} else {
 
 					//$var = trim($var);
-					switch (true) {
-						case preg_match('/^\n/', $var) && preg_match('/\n$/', $var):
-							$var = substr($var, 1, -1);
-							break;
+                    if($var !== null) {
+                        switch (true) {
+                            case $var !== null && preg_match('/^\n/', $var) && preg_match('/\n$/', $var):
+                                $var = substr($var, 1, -1);
+                                break;
 
-						case preg_match('/^\n/', $var):
-							$var = substr($var, 1);
-							break;
+                            case $var !== null && preg_match('/^\n/', $var):
+                                $var = substr($var, 1);
+                                break;
 
-						case preg_match('/\n$/', $var):
-							$var = substr($var, 0, -1);
-							break;
-					}
+                            case $var !== null && preg_match('/\n$/', $var):
+                                $var = substr($var, 0, -1);
+                                break;
+                        }
 
-					// SF Bug no. 810773 - thanks anonymous
-					$var = str_replace('\\', '\\\\', $var);
-					// Ensure dollars in strings are not evaluated reported by SadGeezer 31/3/04
-					$var = str_replace('$', '\\$', $var);
-					// Replaced str_replaces with preg_quote
-					//$var = preg_quote($var);
-					$var = str_replace('\\|', '|', $var);
+                        // SF Bug no. 810773 - thanks anonymous
+                        $var = str_replace('\\', '\\\\', $var);
+                        // Ensure dollars in strings are not evaluated reported by SadGeezer 31/3/04
+                        $var = str_replace('$', '\\$', $var);
+                        // Replaced str_replaces with preg_quote
+                        //$var = preg_quote($var);
+                        $var = str_replace('\\|', '|', $var);
+                    }
 					$copy = preg_replace("|" . $this->tag_start_delim . $v . $this->tag_end_delim . "|m", "$var", $copy);
 
 					if (preg_match('/^\n/', $copy) && preg_match('/\n$/', $copy)) {
@@ -907,7 +909,9 @@ class XTemplate {
      */
 	public function scan_globals () {
 
-		reset($GLOBALS);
+        if(version_compare(phpversion(), '8.0') < 0) {
+            reset($GLOBALS);
+        }
 
 		foreach ($GLOBALS as $k => $v) {
 			$GLOB[$k] = $v;

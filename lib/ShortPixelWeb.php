@@ -18,7 +18,7 @@ require_once("../vendor/autoload.php");
 
 class ShortPixelWeb
 {
-    const VERSION = "1.4.1";
+    const VERSION = "1.4.2";
     const LOG_PRODUCERS = SPLog::PRODUCER_NONE; //SPLog::PRODUCER_WEB | SPLog::PRODUCER_PERSISTER | SPLog::PRODUCER_CLIENT | SPLog::PRODUCER_RESULT | SPLog::PRODUCER_CTRL;
 
     private $settingsHandler;
