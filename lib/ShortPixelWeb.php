@@ -18,7 +18,7 @@ require_once("../vendor/autoload.php");
 
 class ShortPixelWeb
 {
-    const VERSION = "1.4.2";
+    const VERSION = "1.4.3";
     const LOG_PRODUCERS = SPLog::PRODUCER_NONE; //SPLog::PRODUCER_WEB | SPLog::PRODUCER_PERSISTER | SPLog::PRODUCER_CLIENT | SPLog::PRODUCER_RESULT | SPLog::PRODUCER_CTRL;
 
     private $settingsHandler;
@@ -236,7 +236,7 @@ class ShortPixelWeb
 
     function initJSConstants($optData = array()) {
         $username = '[WEB SERVER USER]';
-        if(function_exists('posix_geteuid')) {
+        if(function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
             $pwu_data = posix_getpwuid(posix_geteuid());
             $username = $pwu_data['name'];
         }
