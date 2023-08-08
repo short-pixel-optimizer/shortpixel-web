@@ -20,7 +20,7 @@ foreach($_REQUEST as $param => $val) {
     $args .= " --" . $param . (strlen($val) ? "=" . escapeshellcmd($val) : "");
 }
 putenv("SHELL=/bin/bash");
-unlink($_REQUEST['folder'] . '/shortpixel_log');
+//unlink($_REQUEST['folder'] . '/shortpixel_log');
 $cmd = 'echo "/usr/bin/php ' . dirname(__DIR__) . '/vendor/shortpixel/shortpixel-php/lib/cmdShortpixelOptimize.php ' . $args . ' 2>&1 >>' . $_REQUEST['folder'] . '/shortpixel_log" | at now 2>&1';
 file_put_contents($_REQUEST['folder'] . '/shortpixel_log', $cmd, FILE_APPEND);
 exec($cmd, $ret, $stat);
